@@ -495,7 +495,10 @@ function ldb(){
   if(!DB.pw[KE]){DB.pw[KE]="kortrijk123";DB.pending[KE]={token:genTok(),ts:Date.now(),type:"seed"};}
   sdb();
 }
-function sdb(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
+function sdb(){
+  try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}
+  fetch('/api/saveData',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DB)}).catch(function(){});
+}
 function fd(d){if(!d)return"";const[y,m,dd]=d.split("-");return`${parseInt(dd)} ${MON[parseInt(m)-1]} ${y}`;}
 function gt(a){for(const[d,l]of Object.entries(DIST))if(l.includes(a))return d;return"";}
 function genTok(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
@@ -5147,15 +5150,32 @@ function rViewAsModal(){
   </div>`;
 }
 
-try{ldb();checkUrlToken();render();}catch(e){
-  document.getElementById("root").innerHTML=`<div style="padding:40px;text-align:center;color:#E8EDF5;font-family:sans-serif;">
-    <div style="font-size:48px;margin-bottom:16px;">⚠️</div>
-    <div style="font-size:18px;font-weight:600;margin-bottom:8px;">App kon niet starten</div>
-    <div style="font-size:13px;color:#8A9BB5;margin-bottom:16px;">${e.message}</div>
-    <button onclick="location.reload()" style="padding:8px 20px;background:#00B894;color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:13px;">Herlaad pagina</button>
-  </div>`;
-  console.error("JCI App error:",e);
-}</script>
+// Laad data van server (alle toestellen), val terug op localStorage
+(function(){
+  function startApp(){
+    try{ldb();checkUrlToken();render();}catch(e){
+      document.getElementById("root").innerHTML=`<div style="padding:40px;text-align:center;color:#E8EDF5;font-family:sans-serif;">
+        <div style="font-size:48px;margin-bottom:16px;">⚠️</div>
+        <div style="font-size:18px;font-weight:600;margin-bottom:8px;">App kon niet starten</div>
+        <div style="font-size:13px;color:#8A9BB5;margin-bottom:16px;">${e.message}</div>
+        <button onclick="location.reload()" style="padding:8px 20px;background:#00B894;color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:13px;">Herlaad pagina</button>
+      </div>`;
+      console.error("JCI App error:",e);
+    }
+  }
+  // Toon laad-scherm
+  document.getElementById("root").innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#130F2D;color:#8AB4CC;font-family:sans-serif;font-size:14px;">Laden...</div>';
+  // Haal data op van server
+  fetch('/api/getData')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data){
+        try{localStorage.setItem(SK,JSON.stringify(data));}catch(e){}
+      }
+    })
+    .catch(function(){/* geen verbinding: gebruik localStorage */})
+    .finally(function(){startApp();});
+})();</script>
 <script>
 (function(){
   var lc=document.createElement('link');lc.rel='stylesheet';lc.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(lc);
