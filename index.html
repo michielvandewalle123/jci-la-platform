@@ -696,10 +696,27 @@ function rLogin(){return`<div class="login-wrap" style="position:relative;overfl
   <div class="form-row"><label class="form-label">Wachtwoord</label><input class="form-input" id="lp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/></div>
   <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="login()">Inloggen</button>
   <button class="btn" style="width:100%;font-size:11px;" onclick="forgot()">Wachtwoord vergeten?</button>
-  ${new URLSearchParams(window.location.search).get('dev')==='1'?'<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(239,196,15,0.2);"><div style="font-size:9px;color:rgba(239,196,15,0.5);text-align:center;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">&#9889; Testmodus — snel inloggen</div><div style="display:flex;flex-direction:column;gap:6px;"><button class="btn" style="font-size:11px;background:rgba(16,84,160,0.25);border-color:rgba(16,84,160,0.5);color:#33B3E8;text-align:left;padding:7px 12px;" onclick="quickLogin(\'admin\')"><span style=\"font-weight:600;\">Admin</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Alle rechten</span></button><button class="btn" style="font-size:11px;background:rgba(0,151,215,0.15);border-color:rgba(0,151,215,0.35);color:#0097D7;text-align:left;padding:7px 12px;" onclick="quickLogin(\'bestuur\')"><span style=\"font-weight:600;\">Bestuur JCI Vl.</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees+schrijf</span></button><button class="btn" style="font-size:11px;background:rgba(87,188,188,0.15);border-color:rgba(87,188,188,0.35);color:#57BCBC;text-align:left;padding:7px 12px;" onclick="quickLogin(\'vz\')"><span style=\"font-weight:600;\">Afdelingsvoorzitter</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Eigen afd</span></button><button class="btn" style="font-size:11px;background:rgba(239,196,15,0.1);border-color:rgba(239,196,15,0.25);color:#EFC40F;text-align:left;padding:7px 12px;" onclick="quickLogin(\'localBestuur\')"><span style=\"font-weight:600;\">Lokaal bestuurslid</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees-only</span></button><button class="btn" style="font-size:11px;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);text-align:left;padding:7px 12px;" onclick="quickLogin(\'lid\')"><span style=\"font-weight:600;\">Lid</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Beperkt</span></button></div></div>':''}
+  ${new URLSearchParams(window.location.search).get('dev')==='1'?'<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(239,196,15,0.2);"><div style="font-size:9px;color:rgba(239,196,15,0.5);text-align:center;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">&#9889; Testmodus — snel inloggen</div><div style="display:flex;flex-direction:column;gap:6px;">'+(isDevSite()?'<button class="btn" style="font-size:11px;background:rgba(16,84,160,0.25);border-color:rgba(16,84,160,0.5);color:#33B3E8;text-align:left;padding:7px 12px;" onclick="quickLogin(\'admin\')"><span style=\"font-weight:600;\">Admin</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Alle rechten</span></button>':'')+'<button class="btn" style="font-size:11px;background:rgba(0,151,215,0.15);border-color:rgba(0,151,215,0.35);color:#0097D7;text-align:left;padding:7px 12px;" onclick="quickLogin(\'bestuur\')"><span style=\"font-weight:600;\">Bestuur JCI Vl.</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees+schrijf</span></button><button class="btn" style="font-size:11px;background:rgba(87,188,188,0.15);border-color:rgba(87,188,188,0.35);color:#57BCBC;text-align:left;padding:7px 12px;" onclick="quickLogin(\'vz\')"><span style=\"font-weight:600;\">Afdelingsvoorzitter</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Eigen afd</span></button><button class="btn" style="font-size:11px;background:rgba(239,196,15,0.1);border-color:rgba(239,196,15,0.25);color:#EFC40F;text-align:left;padding:7px 12px;" onclick="quickLogin(\'localBestuur\')"><span style=\"font-weight:600;\">Lokaal bestuurslid</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees-only</span></button><button class="btn" style="font-size:11px;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);text-align:left;padding:7px 12px;" onclick="quickLogin(\'lid\')"><span style=\"font-weight:600;\">Lid</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Beperkt</span></button></div></div>':''}
 </div></div>`;
 }
 
+// --- Test/dev-omgeving detectie ----------------------------------
+// Veilige standaard = TESTSITE: de Admin-snelknop is dan verborgen.
+// De dev-omgeving wordt EXPLICIET herkend, zodat de testsite nooit
+// per ongeluk de Admin-knop toont. Dev = localhost, of een hostname
+// in DEV_HOSTNAMES, of window.__DEV_SITE===true (Netlify snippet).
+var DEV_HOSTNAMES=[
+  // Plak hier de hostname van je dev-site zodra die bestaat, bv:
+  // 'jci-la-dev.netlify.app'
+];
+function isDevSite(){
+  try{
+    if(window.__DEV_SITE===true)return true;
+    var h=(location.hostname||'').toLowerCase();
+    if(h===''||h==='localhost'||h==='127.0.0.1')return true;
+    return DEV_HOSTNAMES.indexOf(h)!==-1;
+  }catch(e){return false;}
+}
 function quickLogin(role){
   var roleMap={
     admin:{user:'michiel.vandewalle@jcivlaanderen.be',afd:null,view:'db'},
