@@ -3,7 +3,7 @@
 // Per type wordt server-side het recht gecontroleerd:
 //   eigen    -> AV's van de eigen afdeling           (recht avEigen ro)
 //   ander    -> AV's van andere afdelingen           (recht avAnder ro)
-//   aanwezig -> AV's waarop de gebruiker aanwezig is   (recht agenda ro; uit DB.visits)
+//   aanwezig -> AV's waarop de gebruiker aanwezig is   (recht bezoek ro; uit DB.visits)
 // Eénrichting: app -> agenda.
 import { getStore } from "@netlify/blobs";
 
@@ -11,10 +11,10 @@ import { getStore } from "@netlify/blobs";
 // Bij een aangepaste rechtentabel wordt DB.rechten[rol] gebruikt (volledig live).
 const DEFAULT_RECHTEN = {
   admin:        { all: 2 },
-  bestuur:      { avEigen: 2, avAnder: 2, agenda: 1 },
-  vz:           { avEigen: 2, avAnder: 1, agenda: 1 },
-  localBestuur: { avEigen: 1, avAnder: 1, agenda: 1 },
-  lid:          { avEigen: 1, avAnder: 0, agenda: 0 }
+  bestuur:      { avEigen: 2, avAnder: 2, bezoek: 2 },
+  vz:           { avEigen: 2, avAnder: 1, bezoek: 2 },
+  localBestuur: { avEigen: 1, avAnder: 1, bezoek: 0 },
+  lid:          { avEigen: 1, avAnder: 0, bezoek: 0 }
 };
 export function rechtFor(db, role){
   return (db.rechten && db.rechten[role]) ? db.rechten[role] : (DEFAULT_RECHTEN[role] || {});
@@ -114,7 +114,7 @@ export default async (req) => {
       items = avs.filter(a => a.afdeling !== afd);
       label = "JCI \u2013 AV's andere afdelingen";
     } else { // aanwezig
-      if (!hasR(rights, "agenda", "ro")) return new Response("Forbidden", { status: 403 });
+      if (!hasR(rights, "bezoek", "ro")) return new Response("Forbidden", { status: 403 });
       const avByKey = {};
       avs.forEach(a => { avByKey[a.afdeling + "|" + a.datum] = a; });
       items = (db.visits || []).filter(v => v.by === user && v.status !== "afgelast").map(v => {
