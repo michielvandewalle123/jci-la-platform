@@ -261,7 +261,7 @@ textarea.form-input{resize:vertical;min-height:70px;}
 }
 /* Leaflet dark overrides */
 .leaflet-container{background:#162236!important;}
-.leaflet-tile{filter:brightness(0.7) saturate(0.6);}
+.leaflet-tile{filter:grayscale(1) contrast(1.05);}
 .leaflet-popup-content-wrapper{background:var(--card2);color:var(--text);border:1px solid var(--border2);border-radius:8px;font-family:var(--font);font-size:12px;}
 .leaflet-popup-tip{background:var(--card2);}
 .leaflet-popup-close-button{color:var(--text2)!important;}
@@ -3260,6 +3260,7 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
       const ll=e.target.getLatLng();
       if(!DB.afdInfo[afd])DB.afdInfo[afd]={ledenHistory:[],kandidatenHistory:[]};
       DB.afdInfo[afd].coords=[ll.lat,ll.lng];
+      DB.afdInfo[afd].coordsSet=true;
       sdb();
       marker.bindPopup(buildPopupHtml(`<br><span style="color:#4A9EFF;">Locatie bijgewerkt ✓</span>`),{maxWidth:240}).openPopup();
     });
@@ -4636,7 +4637,12 @@ function importData(input){
       DB.pw=obj.pw||{};
       DB.pending=obj.pending||{};
       DB.notes=obj.notes||{};
+      // Behoud zelf-geplaatste kaartlocaties: coords met coordsSet=true (door de
+      // gebruiker versleept) overleven een import en worden niet overschreven.
+      var lockedCoords={};
+      Object.keys(DB.afdInfo||{}).forEach(function(a){var i=DB.afdInfo[a];if(i&&i.coordsSet&&i.coords)lockedCoords[a]=i.coords;});
       DB.afdInfo=obj.afdInfo||{};
+      Object.keys(lockedCoords).forEach(function(a){if(DB.afdInfo[a]){DB.afdInfo[a].coords=lockedCoords[a];DB.afdInfo[a].coordsSet=true;}});
       DB.changelog=obj.changelog||[];
       DB.inaktief=obj.inaktief||[];DB.avNotes=obj.avNotes||{};DB.visits=obj.visits||[];DB.localBestuur=obj.localBestuur||{};DB.lastLogin=obj.lastLogin||{};
       // Ensure super admin is always present
