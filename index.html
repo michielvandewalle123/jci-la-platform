@@ -3354,7 +3354,7 @@ function initCharts(){
 
     // ── TIJD VIEW ──────────────────────────────────────────────
     if(S.chartView==="tijd"){
-      let afdsFilter=S.chartProv==="alle"?ALL:DIST[S.chartProv]||ALL;
+      let afdsFilter=S.chartProv==="alle"?Object.keys(DB.afdInfo||{}):(DIST[S.chartProv]||ALL);
       if(S.chartTijdAfd&&ALL.includes(S.chartTijdAfd))afdsFilter=[S.chartTijdAfd];
 
       const dateSet=new Set();
@@ -3475,14 +3475,15 @@ function initCharts(){
         }
       }});
     } else {
-      const afdLabels=afds.map(a=>a.replace('JCI ',''));
-      const ledenData=afds.map(a=>parseInt(DB.afdInfo[a]?.leden||0));
-      const kandData=afds.map(a=>parseInt(DB.afdInfo[a]?.kandidaten||0));
-      const bgLeden=afds.map(a=>DIST_COLORS[gt(a)]+"DD");
-      const bgKand=afds.map(a=>DIST_COLORS[gt(a)]+"55");
+      const afds2=afds.filter(a=>DB.afdInfo[a]?.aktief!==false&&parseInt(DB.afdInfo[a]?.leden||0)>0);
+      const afdLabels=afds2.map(a=>a.replace('JCI ',''));
+      const ledenData=afds2.map(a=>parseInt(DB.afdInfo[a]?.leden||0));
+      const kandData=afds2.map(a=>parseInt(DB.afdInfo[a]?.kandidaten||0));
+      const bgLeden=afds2.map(a=>DIST_COLORS[gt(a)]+"DD");
+      const bgKand=afds2.map(a=>DIST_COLORS[gt(a)]+"55");
       if(S.chartType!=="kandidaten")datasets.push({label:t('leden_lbl'),data:ledenData,backgroundColor:bgLeden,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
       if(S.chartType!=="leden")datasets.push({label:t('kandidaten'),data:kandData,backgroundColor:bgKand,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
-      const isHoriz=afds.length>10;
+      const isHoriz=afds2.length>10;
       chartInst=new Chart(ctx,{type:"bar",data:{labels:afdLabels,datasets},options:{
         responsive:true,maintainAspectRatio:false,
         indexAxis:isHoriz?"y":"x",
