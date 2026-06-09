@@ -565,7 +565,7 @@ let S={view:"login",user:null,role:null,afd:null,
   editUserEmail:null,noteAfd:null,
   chartView:"afd",chartType:"leden",chartProv:"alle",
   afdMapDragMode:false,
-  chartsInited:false,bulkLedenParsed:[],logFilterAfd:'alle',logFilterType:'alle',importMsg:null,viewAs:null,pwModal:false,pwErr:'',pwOk:'',lang:'nl',visitModal:null,avNotesId:null,chartTijdAfd:'',chartTijdProv:'alle',afdDetail:null,visitEditId:null,avSortMode:'chronologisch',avFilterAfd:'alle',avFilterPeriod:'komende',avFilterWj:'alle',avFilterVan:'',avFilterTot:'',avFilterBezocht:'alle',afdChartType:'leden',inaktiefAfd:null,afdFilterAktief:'alle',avModalDatum:'',jciAvTab:'upcoming',jciAvEdit:null,jciAvDetail:null,jciAvDatum:'',jciVolmachtAv:null,afdWerkjaar:null,showWjDd:null,afdSortMode:'naam',afdGroupMode:'provincie',avListTab:'lijst',usrTab:'gebruikers',usrZoek:'',usrSort:'afd',usrSortDir:'asc',rolPopupUser:null,overdrachtAfd:null,lhInfoIdx:null,showCredits:false,profielTab:'gegevens',profielErr:'',profielOk:''
+  chartsInited:false,bulkLedenParsed:[],logFilterAfd:'alle',logFilterType:'alle',importMsg:null,viewAs:null,pwModal:false,pwErr:'',pwOk:'',lang:'nl',visitModal:null,avNotesId:null,chartTijdAfd:'',chartTijdProv:'alle',afdDetail:null,visitEditId:null,avSortMode:'chronologisch',avFilterAfd:'alle',avFilterPeriod:'komende',avFilterWj:'alle',avFilterVan:'',avFilterTot:'',avFilterBezocht:'alle',afdChartType:'leden',inaktiefAfd:null,afdFilterAktief:'aktief',avModalDatum:'',jciAvTab:'upcoming',jciAvEdit:null,jciAvDetail:null,jciAvDatum:'',jciVolmachtAv:null,afdWerkjaar:null,showWjDd:null,afdSortMode:'naam',afdGroupMode:'provincie',avListTab:'lijst',usrTab:'gebruikers',usrZoek:'',usrSort:'afd',usrSortDir:'asc',rolPopupUser:null,overdrachtAfd:null,lhInfoIdx:null,showCredits:false,profielTab:'gegevens',profielErr:'',profielOk:''
 };
 let leafletAfdMap=null,chartInst=null,afdMapMarkers={};
 
@@ -3006,10 +3006,8 @@ function rAfdSortTopbar(){
   var sm=S.afdSortMode||"naam";
   var h="<div class=\"topbar\"><div><div class=\"page-title\">";
   h+=t("afdelingen")+"</div>";
-  h+="<div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;\">";
-  var filters=[["alle",t("alle")+" ("+ALL.length+")"],["aktief",t("actief")+" ("+ALL.filter(function(a){return DB.afdInfo[a]&&DB.afdInfo[a].aktief!==false;}).length+")"],["inaktief","Inactief ("+ALL.filter(function(a){return DB.afdInfo[a]&&DB.afdInfo[a].aktief===false;}).length+")"]];
-  filters.forEach(function(f){h+="<button class=\"seg-btn "+(af===f[0]?"active ":"")+"\" data-af=\""+f[0]+"\" onclick=\"S.afdFilterAktief=this.dataset.af;render()\" style=\"font-size:9px;\">"+f[1]+"</button>";});
-  h+="</div><div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;overflow-x:auto;scrollbar-width:none;\">";
+  h+="<div style=\"margin-top:4px;\">"+rAktiefFilterButtons()+"</div>";
+  h+="<div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;overflow-x:auto;scrollbar-width:none;\">";
   h+="<span style=\"font-size:9px;color:rgba(255,255,255,0.3);\">Groep:</span>";
   [["provincie","Per provincie"],["alle","Alles samen"]].forEach(function(g){h+="<button class=\"seg-btn "+(gm===g[0]?"active":"")+"\" data-gm=\""+g[0]+"\" onclick=\"S.afdGroupMode=this.dataset.gm;render()\" style=\"font-size:9px;\">"+g[1]+"</button>";});
   h+="<span style=\"font-size:9px;color:rgba(255,255,255,0.3);margin-left:6px;\">Sorteer:</span>";
@@ -3163,7 +3161,9 @@ function rAfdMap(){
   if(!hasRecht('kaart','ro'))return`<div class="page active"><div class="topbar"><div class="page-title">${t('afdKaart')}</div></div><div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_toegang_scherm')}</div></div></div>`;
   return`<div class="page active">
     <div class="topbar">
-      <div><div class="page-title">${t('afdKaart')}</div><div class="page-sub">Locaties van alle 27 afdelingen in Vlaanderen</div></div>
+      <div><div class="page-title">${t('afdKaart')}</div><div class="page-sub">Locaties van de afdelingen in Vlaanderen</div>
+        <div style="margin-top:4px;">${rAktiefFilterButtons()}</div>
+      </div>
       <div style="display:flex;gap:8px;align-items:center;">
         ${hasRecht('kaart','rw')?`<button class="btn btn-sm ${S.afdMapDragMode?'btn-primary':''}" onclick="toggleDragMode()">
           ${ICO.pencil} ${S.afdMapDragMode?'Bewerken actief':'Locaties aanpassen'}
@@ -3201,7 +3201,7 @@ function initAfdMapReadonly(){if(typeof L==="undefined"){document.getElementById
   leafletAfdMap=L.map("map-afd-container",{center:[50.95,4.15],zoom:8});
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:18}).addTo(leafletAfdMap);
   const today=nowStr();
-  ALL.forEach(afd=>{
+  filterByAktief(afdsWithInactive(),S.afdFilterAktief||'aktief').forEach(afd=>{
     const coord=getCoords(afd);const dist=gt(afd);const color=DIST_COLORS[dist]||"#888";
     const info=DB.afdInfo[afd]||{};const vz=DB.vz[afd]||{};
     const vzNaam=vz.naam||"—";const vzGsmRaw=vz.gsm||"";const vzGsm=vzGsmRaw||"—";const vzWJ=werkjaarLabel(vz.werkjaar||'kalender');
@@ -3223,7 +3223,7 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:18}).addTo(leafletAfdMap);
 
   const today=nowStr();
-  ALL.forEach(afd=>{
+  filterByAktief(afdsWithInactive(),S.afdFilterAktief||'aktief').forEach(afd=>{
     const coord=getCoords(afd);
     const dist=gt(afd);
     const color=DIST_COLORS[dist]||"#888";
@@ -3269,11 +3269,12 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
 function rLeden(){
   // Toegangsguard: minstens leesrecht op eigen of andere leden.
   if(!(hasRecht('ledenEigen','ro')||hasRecht('ledenAnder','ro')))return`<div class="page active"><div class="topbar"><div class="page-title">${t('leden')}</div></div><div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_toegang_scherm')}</div></div></div>`;
-  const vis=visibleAfdsForLeden();
+  const visBase=hasRecht('ledenAnder','ro')?afdsWithInactive():visibleAfdsForLeden();
+  const vis=filterByAktief(visBase,S.afdFilterAktief||'aktief');
   const totalLeden=vis.reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0);
   const totalKand=vis.reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0);
   return`<div class="page active">
-    <div class="topbar"><div><div class="page-title">${t('leden')}</div></div>
+    <div class="topbar"><div><div class="page-title">${t('leden')}</div><div style="margin-top:4px;">${rAktiefFilterButtons()}</div></div>
       ${(hasRecht('ledenAnder','ro')||hasRecht('ledenEigen','ro'))?`<button class="btn btn-sm" onclick="exportExcel()">${ICO.export} ${t('export_excel')}</button>`:""}
       ${(hasRecht('ledenAnder','rw')||hasRecht('ledenEigen','rw'))?`<button class="btn btn-sm" onclick="S.modal='bulk-leden';S.bulkLedenParsed=[];render()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px;"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M15 3h6v6"/><path d="M10 14l11-11"/></svg> ${t('bulk_import_leden')}</button>`:""}
     </div>
@@ -3305,7 +3306,7 @@ function rLeden(){
         </select>
         <select class="form-input" style="width:160px;" onchange="S.chartTijdAfd=this.value;switchView('leden')">
           <option value="">Alle afdelingen</option>
-          ${(S.chartProv==='alle'?ALL:DIST[S.chartProv]||ALL).map(a=>`<option value="${a}" ${S.chartTijdAfd===a?'selected':''}>${a.replace('JCI ','')}</option>`).join("")}
+          ${filterByAktief(S.chartProv==='alle'?afdsWithInactive():(DIST[S.chartProv]||ALL),S.afdFilterAktief||'aktief').map(a=>`<option value="${a}" ${S.chartTijdAfd===a?'selected':''}>${a.replace('JCI ','')}</option>`).join("")}
         </select>`:""}
       </div>
       <div class="chart-wrap" style="height:480px;"><canvas id="leden-chart"></canvas></div>
@@ -3350,11 +3351,12 @@ function initCharts(){
     Chart.defaults.color="#8AB4CC";Chart.defaults.borderColor="#231E52";
     const BOTH=S.chartType==="beide";
     const ledenColor="#0097D7";const kandColor="#EFC40F";
+    const aktMode=S.afdFilterAktief||'aktief';
 
     // ── TIJD VIEW ──────────────────────────────────────────────
     if(S.chartView==="tijd"){
-      let afdsFilter=S.chartProv==="alle"?Object.keys(DB.afdInfo||{}):(DIST[S.chartProv]||ALL);
-      if(S.chartTijdAfd&&ALL.includes(S.chartTijdAfd))afdsFilter=[S.chartTijdAfd];
+      let afdsFilter=filterByAktief(S.chartProv==="alle"?afdsWithInactive():(DIST[S.chartProv]||ALL),aktMode);
+      if(S.chartTijdAfd&&afdsWithInactive().includes(S.chartTijdAfd))afdsFilter=[S.chartTijdAfd];
 
       const dateSet=new Set();
       afdsFilter.forEach(a=>{
@@ -3450,13 +3452,13 @@ function initCharts(){
 
     // ── BAR CHARTS (per afdeling / per provincie) ──────────────
     const labels=[],datasets=[];
-    let afds=S.chartProv==="alle"?ALL:DIST[S.chartProv]||ALL;
+    let afds=filterByAktief(S.chartProv==="alle"?afdsWithInactive():(DIST[S.chartProv]||ALL),aktMode);
     const barOpts=BOTH?{barPercentage:0.85,categoryPercentage:0.9}:{barPercentage:0.65,categoryPercentage:0.85};
 
     if(S.chartView==="prov"){
       const provLabels=Object.keys(DIST);
-      const ledenData=provLabels.map(d=>DIST[d].reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0));
-      const kandData=provLabels.map(d=>DIST[d].reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0));
+      const ledenData=provLabels.map(d=>DIST[d].filter(a=>aktiefMatch(a,aktMode)).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0));
+      const kandData=provLabels.map(d=>DIST[d].filter(a=>aktiefMatch(a,aktMode)).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0));
       const bgLeden=provLabels.map(d=>DIST_COLORS[d]+"DD");
       const bgKand=provLabels.map(d=>DIST_COLORS[d]+"66");
       if(S.chartType!=="kandidaten")datasets.push({label:t('leden_lbl'),data:ledenData,backgroundColor:bgLeden,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
@@ -3474,7 +3476,7 @@ function initCharts(){
         }
       }});
     } else {
-      const afds2=afds.filter(a=>DB.afdInfo[a]?.aktief!==false&&parseInt(DB.afdInfo[a]?.leden||0)>0);
+      const afds2=afds.filter(a=>parseInt(DB.afdInfo[a]?.leden||0)>0);
       const afdLabels=afds2.map(a=>a.replace('JCI ',''));
       const ledenData=afds2.map(a=>parseInt(DB.afdInfo[a]?.leden||0));
       const kandData=afds2.map(a=>parseInt(DB.afdInfo[a]?.kandidaten||0));
@@ -3591,19 +3593,21 @@ function rAfd(){
       </div>
     </div>
     ${(function(){
-      var af=S.afdFilterAktief||"alle";
+      var af=S.afdFilterAktief||"aktief";
       var gm=S.afdGroupMode||"provincie";
-      function filterAfds(arr){return sortAfds(arr.filter(function(a){return vis.indexOf(a)>=0&&(af==="aktief"?DB.afdInfo[a]&&DB.afdInfo[a].aktief!==false:af==="inaktief"?DB.afdInfo[a]&&DB.afdInfo[a].aktief===false:true);}));}
+      var visExt=vis.concat(hasRecht('afdAnder','ro')?afdsExtra():[]);
+      function filterAfds(arr){return sortAfds(arr.filter(function(a){return visExt.indexOf(a)>=0&&aktiefMatch(a,af);}));}
       if(gm==="alle"){
-        var allSorted=filterAfds(ALL);
-        return rAfdTableRows(allSorted);
+        return rAfdTableRows(filterAfds(afdsWithInactive()));
       }
-      return Object.entries(DIST).map(function(de){
-        var d=de[0];var afds=de[1];
-        var distAfds=filterAfds(afds);
+      var out=Object.entries(DIST).map(function(de){
+        var distAfds=filterAfds(de[1]);
         if(!distAfds.length)return "";
-        return rAfdTableRows(distAfds,d);
+        return rAfdTableRows(distAfds,de[0]);
       }).join("");
+      var extra=filterAfds(afdsExtra());
+      if(extra.length)out+=rAfdTableRows(extra,"Verdwenen afdelingen");
+      return out;
     })()}
   </div>`;}
 
@@ -3856,6 +3860,23 @@ function canEditAfdInfo(afd){return hasRecht('afdAnder','rw')||(afd===S.afd&&has
 function visibleAfdsForAfd(){return hasRecht('afdAnder','ro')?ALL.slice():(hasRecht('afdEigen','ro')&&S.afd?[S.afd]:[]);}
 // Idem voor leden-schermen.
 function visibleAfdsForLeden(){return hasRecht('ledenAnder','ro')?ALL.slice():(hasRecht('ledenEigen','ro')&&S.afd?[S.afd]:[]);}
+// ── Verdwenen/inactieve afdelingen (in de data, niet in DIST/ALL) ──
+// afdsExtra() = afdInfo-keys die niet in ALL staan (de toegevoegde, niet meer
+// bestaande afdelingen). afdsWithInactive() = actieve + die verdwenen afdelingen.
+// Zo verschijnen ze in de lijst/kaart/grafiek (onder Inactief/Alle) zonder de
+// AV-keuzelijsten, stemsterkte enz. te vervuilen (die blijven op ALL).
+function afdsExtra(){return Object.keys(DB.afdInfo||{}).filter(function(a){return ALL.indexOf(a)<0;});}
+function afdsWithInactive(){return ALL.concat(afdsExtra());}
+function aktiefMatch(a,mode){var act=DB.afdInfo[a]?DB.afdInfo[a].aktief!==false:true;return mode==='inaktief'?!act:mode==='alle'?true:act;}
+function filterByAktief(arr,mode){return arr.filter(function(a){return aktiefMatch(a,mode);});}
+// Herbruikbare filterknoppen: Actief (default) · Inactief · Alle (zelfde volgorde overal)
+function rAktiefFilterButtons(){
+  var af=S.afdFilterAktief||'aktief';var base=afdsWithInactive();
+  var defs=[['aktief',t('actief')+' ('+filterByAktief(base,'aktief').length+')'],['inaktief','Inactief ('+filterByAktief(base,'inaktief').length+')'],['alle',t('alle')+' ('+base.length+')']];
+  var h='<div style="display:flex;gap:4px;flex-wrap:wrap;">';
+  defs.forEach(function(f){h+='<button class="seg-btn '+(af===f[0]?'active ':'')+'" data-af="'+f[0]+'" onclick="S.afdFilterAktief=this.dataset.af;render()" style="font-size:9px;">'+f[1]+'</button>';});
+  return h+'</div>';
+}
 // Mag de huidige gebruiker de gegevens van deze afdeling aanpassen?
 // (afdAnder rw = alle afdelingen; afdEigen rw = enkel de eigen afdeling)
 function canEditAfd(afd){
