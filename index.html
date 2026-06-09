@@ -327,6 +327,7 @@ const T={
     log:"Aanpassingslog",uitloggen:"Uitloggen",wachtwoord:"Wachtwoord wijzigen",
     toevoegen:"Toevoegen",opslaan:"Opslaan",annuleren:"Annuleren",sluiten:"Sluiten",
     laInfo:"LA info",la_item_toevoegen:"Info toevoegen",la_item_bewerken:"Info bewerken",la_titel_veld:"Titel",la_tekst_veld:"Tekst",la_links_veld:"Links",la_link_label:"Linktekst",la_link_url:"URL (https://…)",la_link_toevoegen:"Link toevoegen",la_leeg:"Nog geen info gedeeld.",la_verwijder_bevestig:"Dit info-item verwijderen?",la_titel_verplicht:"Geef een titel in.",la_door:"door",
+    cal_sync_titel:"Agenda synchroniseren",cal_sync_uitleg:"Abonneer je in Google Agenda op je persoonlijke feed met de lokale AV's waarop je aanwezig staat. Nieuwe of gewijzigde aanwezigheden verschijnen automatisch (Google ververst periodiek).",cal_sync_hoe:"In Google Agenda (desktop): naast 'Andere agenda's' op + klikken → 'Inschrijven via URL' → de link hieronder plakken.",cal_genereer:"Genereer mijn agenda-link",cal_kopieer:"Kopieer",cal_gekopieerd:"Gekopieerd!",cal_vernieuw:"Vernieuw link",cal_intrekken:"Intrekken",cal_vernieuw_bevestig:"Een nieuwe link maken? De oude link stopt dan met werken.",cal_intrekken_bevestig:"De agenda-link intrekken? Het abonnement stopt dan met werken.",
     afdeling:"Afdeling",datum:"Datum",uur:"Uur",locatie:"Locatie",adres:"Adres",
     voorzitter:"Voorzitter",leden_lbl:"Leden",kandidaten:"Kandidaten",kand_abbr:"kand.",peildatum:"Ledentelling",
     notities:"Notities",bezoekplan:"Bezoekplanning",
@@ -383,6 +384,7 @@ const T={
     log:"Journal des modifications",uitloggen:"Se déconnecter",wachtwoord:"Changer mot de passe",
     toevoegen:"Ajouter",opslaan:"Enregistrer",annuleren:"Annuler",sluiten:"Fermer",
     laInfo:"Infos LA",la_item_toevoegen:"Ajouter une info",la_item_bewerken:"Modifier l'info",la_titel_veld:"Titre",la_tekst_veld:"Texte",la_links_veld:"Liens",la_link_label:"Texte du lien",la_link_url:"URL (https://…)",la_link_toevoegen:"Ajouter un lien",la_leeg:"Aucune info partagée pour le moment.",la_verwijder_bevestig:"Supprimer cet élément d'info ?",la_titel_verplicht:"Indiquez un titre.",la_door:"par",
+    cal_sync_titel:"Synchroniser l'agenda",cal_sync_uitleg:"Abonnez-vous dans Google Agenda à votre flux personnel reprenant les AG locales auxquelles vous êtes présent. Les présences nouvelles ou modifiées apparaissent automatiquement (Google actualise périodiquement).",cal_sync_hoe:"Dans Google Agenda (ordinateur) : à côté de « Autres agendas », cliquez sur + → « S'abonner à l'aide d'une URL » → collez le lien ci-dessous.",cal_genereer:"Générer mon lien d'agenda",cal_kopieer:"Copier",cal_gekopieerd:"Copié !",cal_vernieuw:"Renouveler le lien",cal_intrekken:"Révoquer",cal_vernieuw_bevestig:"Créer un nouveau lien ? L'ancien cessera de fonctionner.",cal_intrekken_bevestig:"Révoquer le lien d'agenda ? L'abonnement cessera de fonctionner.",
     afdeling:"Section",datum:"Date",uur:"Heure",locatie:"Lieu",adres:"Adresse",
     voorzitter:"Président(e)",leden_lbl:"Membres",kandidaten:"Candidats",kand_abbr:"cand.",peildatum:"Comptage des membres",
     notities:"Notes",bezoekplan:"Planning de visites",
@@ -439,6 +441,7 @@ const T={
     log:"Change log",uitloggen:"Log out",wachtwoord:"Change password",
     toevoegen:"Add",opslaan:"Save",annuleren:"Cancel",sluiten:"Close",
     laInfo:"LA info",la_item_toevoegen:"Add info",la_item_bewerken:"Edit info",la_titel_veld:"Title",la_tekst_veld:"Text",la_links_veld:"Links",la_link_label:"Link text",la_link_url:"URL (https://…)",la_link_toevoegen:"Add link",la_leeg:"No info shared yet.",la_verwijder_bevestig:"Delete this info item?",la_titel_verplicht:"Please enter a title.",la_door:"by",
+    cal_sync_titel:"Sync to calendar",cal_sync_uitleg:"Subscribe in Google Calendar to your personal feed of the local GAs you're attending. New or changed attendances appear automatically (Google refreshes periodically).",cal_sync_hoe:"In Google Calendar (desktop): next to 'Other calendars' click + → 'Subscribe from URL' → paste the link below.",cal_genereer:"Generate my calendar link",cal_kopieer:"Copy",cal_gekopieerd:"Copied!",cal_vernieuw:"Refresh link",cal_intrekken:"Revoke",cal_vernieuw_bevestig:"Create a new link? The old one will stop working.",cal_intrekken_bevestig:"Revoke the calendar link? The subscription will stop working.",
     afdeling:"Chapter",datum:"Date",uur:"Time",locatie:"Location",adres:"Address",
     voorzitter:"President",leden_lbl:"Members",kandidaten:"Candidates",kand_abbr:"cand.",peildatum:"Member count",
     notities:"Notes",bezoekplan:"Visit planning",
@@ -549,7 +552,7 @@ const ICO={
 };
 
 
-let DB={avs:[],admins:[SUPER],bestuur:[],vz:{},pw:{},pending:{},notes:{},afdInfo:{},changelog:[],avNotes:{},visits:[],localBestuur:{},laInfo:[]};
+let DB={avs:[],admins:[SUPER],bestuur:[],vz:{},pw:{},pending:{},notes:{},afdInfo:{},changelog:[],avNotes:{},visits:[],localBestuur:{},laInfo:[],calTokens:{}};
 // afdInfo[afd] = {leden, ledenDatum, ledenHistory:[{val,datum,ts,by}], kandidaten, kandidatenDatum, kandidatenHistory:[{val,datum,ts,by}], locatie, website, coords:[lat,lng]}
 // changelog = [{id, ts, user, action, afd, field, oldVal, newVal, datum}]
 
@@ -580,6 +583,7 @@ function applyDbDefaults(){
   if(!DB.notes)DB.notes={};if(!DB.afdInfo)DB.afdInfo={};if(!DB.bestuur)DB.bestuur=[];if(!DB.changelog)DB.changelog=[];if(!DB.avNotes)DB.avNotes={};if(!DB.visits)DB.visits=[];if(!DB.localBestuur)DB.localBestuur={};if(!DB.lastLogin)DB.lastLogin={};if(!DB.profiles)DB.profiles={};if(!DB.afdLeden)DB.afdLeden={};
   if(!DB.jciAvs)DB.jciAvs=[];if(!DB.jciAvStatus)DB.jciAvStatus={};
   if(!DB.laInfo)DB.laInfo=[];
+  if(!DB.calTokens)DB.calTokens={};
   if(!DB.admins.includes(SUPER))DB.admins.unshift(SUPER);
   // Migrate old afdInfo to include history
   ALL.forEach(a=>{
@@ -1193,6 +1197,7 @@ function rBezoek(){
       </div>
       ${canPlan?`<button class="btn btn-primary btn-sm" onclick="S.visitEditId=null;S.visitModal={};render()">${ICO.plus} ${t('bezoek_toevoegen')}</button>`:''}
     </div>
+    ${rCalSyncCard()}
     <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
       ${['alle','gepland','bezocht','afgelast'].map(s=>`<button class="seg-btn ${filterStatus===s?'active':''}" onclick="S.visitFilter='${s}';render()">${s==='alle'?t('alle'):statusLabel[s]||s}${s!=='alle'?` (${counts[s]||0})`:''}</button>`).join('')}
     </div>
@@ -1224,6 +1229,43 @@ function rBezoek(){
       </div>`;}).join('')}
     ${S.visitModal!==null?rVisitModal():''}
   </div>`;}
+
+// ═══════════════════════════════════════════
+// AGENDA-SYNC (iCal-feed per gebruiker)
+// ═══════════════════════════════════════════
+// Elke gebruiker heeft een persoonlijk, onraadbaar token (DB.calTokens[user]).
+// De Netlify-functie /.netlify/functions/calendar?token=... levert een .ics-feed
+// met de lokale AV's waarop die persoon aanwezig staat (DB.visits, by===user,
+// status != afgelast). Eénrichting: app → agenda. Google ververst periodiek.
+function calToken(){return(DB.calTokens&&DB.calTokens[S.user])||null;}
+function calUrl(){var tk=calToken();return tk?(location.origin+'/.netlify/functions/calendar?token='+encodeURIComponent(tk)):'';}
+function genCalToken(){if(!S.user)return;if(!DB.calTokens)DB.calTokens={};DB.calTokens[S.user]=genTok()+genTok();sdb();render();}
+function revokeCalToken(){if(DB.calTokens)delete DB.calTokens[S.user];sdb();render();}
+function copyCalUrl(){var el=document.getElementById('cal-url');if(!el)return;try{el.focus();el.select&&el.select();}catch(e){}try{if(navigator.clipboard)navigator.clipboard.writeText(el.value);else document.execCommand&&document.execCommand('copy');}catch(e){}}
+function rCalSyncCard(){
+  if(!S.user)return'';
+  var tk=calToken();
+  return`<div class="card" style="margin-bottom:14px;border-left:2px solid #EFC40F;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="color:#EFC40F;display:inline-flex;">${ICO.kal}</span>
+      <div style="font-weight:700;font-size:13px;">${t('cal_sync_titel')}</div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">${t('cal_sync_uitleg')}</div>
+    ${tk?`
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <input class="form-input" id="cal-url" readonly value="${escHtml(calUrl())}" style="flex:1;min-width:220px;font-size:11px;" onclick="this.select()"/>
+        <button class="btn btn-sm btn-primary" onclick="copyCalUrl()">${t('cal_kopieer')}</button>
+      </div>
+      <div style="font-size:10px;color:var(--text2);margin-top:8px;">${t('cal_sync_hoe')}</div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-sm" onclick="if(confirm(t('cal_vernieuw_bevestig')))genCalToken()">${t('cal_vernieuw')}</button>
+        <button class="btn btn-sm btn-danger" onclick="if(confirm(t('cal_intrekken_bevestig')))revokeCalToken()">${t('cal_intrekken')}</button>
+      </div>
+    `:`
+      <button class="btn btn-sm btn-primary" onclick="genCalToken()">${ICO.kal} ${t('cal_genereer')}</button>
+    `}
+  </div>`;
+}
 
 function rVisitModal(){
   const v=S.visitModal||{};const isEdit=!!v.id;
