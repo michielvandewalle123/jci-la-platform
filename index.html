@@ -300,7 +300,7 @@ const DIST={
 };
 const ALL=Object.values(DIST).flat();
 const SUPER="michiel.vandewalle@jcivlaanderen.be";
-const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,agenda:1,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,agenda:1,gebruikers:0,log:0,import:0},localBestuur:{avEigen:1,avAnder:1,afdEigen:1,afdAnder:0,ledenEigen:1,ledenAnder:0,jciAvBeheer:0,jciAvEigen:1,jciAvAnder:0,kaart:1,bezoek:0,laInfo:1,agenda:1,gebruikers:0,log:0,import:0},lid:{avEigen:1,avAnder:0,afdEigen:0,afdAnder:0,ledenEigen:0,ledenAnder:0,jciAvBeheer:0,jciAvEigen:0,jciAvAnder:0,kaart:0,bezoek:0,laInfo:1,agenda:0,gebruikers:0,log:0,import:0}};
+const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,gebruikers:0,log:0,import:0},localBestuur:{avEigen:1,avAnder:1,afdEigen:1,afdAnder:0,ledenEigen:1,ledenAnder:0,jciAvBeheer:0,jciAvEigen:1,jciAvAnder:0,kaart:1,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0},lid:{avEigen:1,avAnder:0,afdEigen:0,afdAnder:0,ledenEigen:0,ledenAnder:0,jciAvBeheer:0,jciAvEigen:0,jciAvAnder:0,kaart:0,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0}};
 const VERSION={num:"2.4",datum:"02/06/2026",changes:[
   {v:"2.4",datum:"02/06/2026",items:["Rechten-audit: volledige app respecteert nu de rechtentabel i.p.v. rolnamen (schermguards, rij-scoping, knop-gating)","Navigatie verbergt schermen per recht voor álle rollen; admin-schermen op gebruikers/log/import","Bezoekplanning herwerkt: 'wie is aanwezig per lokale AV' met statuslabels","Aanwezig melden gekoppeld aan AV-schrijfrecht (canAttend)","Eigen profiel via initialen-bolletje: voornaam, familienaam, gsm, werkingsjaar gepind + wachtwoord","Ledengrafiek per afdeling hoger + alle namen leesbaar (y-as 'JCI afdelingen')","Grafieken in de tijd met rechte lijnen","Meertaligheid FR/EN: maanden + tientallen teksten vertaald (154 keys per taal)","Kalender: dag wordt weer ontkleurd bij deselecteren aanwezigheid","Nav-icoon 'AV JCI Vlaanderen' = users"]},
   {v:"2.3",datum:"30/05/2026",items:["Bugfix: 56+ dubbele functies verwijderd (betere prestaties)","Beveiliging: doRolChange/rLog/importData/stemsterkte beveiligd","Import/Export tab enkel zichtbaar voor admin","Toegangscontrole rLog versterkt"]},
@@ -1237,7 +1237,7 @@ function rBezoek(){
 // levert per type een .ics-feed en controleert server-side de rechten:
 //   eigen    -> AV's van de eigen afdeling          (recht avEigen ro)
 //   ander    -> AV's van andere afdelingen          (recht avAnder ro)
-//   aanwezig -> AV's waarop de persoon aanwezig is   (recht agenda ro; uit DB.visits)
+//   aanwezig -> AV's waarop de persoon aanwezig is   (recht bezoek ro; uit DB.visits)
 // Eénrichting: app -> agenda. Google ververst periodiek.
 function calToken(){return(DB.calTokens&&DB.calTokens[S.user])||null;}
 function calUrlType(type){var tk=calToken();return tk?(location.origin+'/.netlify/functions/calendar?token='+encodeURIComponent(tk)+'&type='+type):'';}
@@ -1259,7 +1259,7 @@ function rProfielKalender(afd){
   if(!S.user)return'';
   var eigenOK=hasRecht('avEigen','ro')&&!!afd;
   var anderOK=hasRecht('avAnder','ro');
-  var aanwezigOK=hasRecht('agenda','ro');
+  var aanwezigOK=hasRecht('bezoek','ro');
   if(!eigenOK&&!anderOK&&!aanwezigOK)return`<div style="font-size:12px;color:var(--text2);padding:6px 0;">${t('cal_geen_kalenders')}</div>`;
   var tk=calToken();
   if(!tk)return`<div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5;">${t('cal_sync_uitleg')}</div>
@@ -2686,7 +2686,6 @@ function rRechten(){
     {id:'kaart',label:'Kaart afdelingen',group:'Overige'},
     {id:'bezoek',label:'Bezoekplanning',group:'Overige'},
     {id:'laInfo',label:'LA info (gedeelde info & links)',group:'Overige'},
-    {id:'agenda',label:"Agenda-sync: AV's waar ik aanwezig ben",group:'Overige'},
     {id:'gebruikers',label:'Gebruikers & rechten',group:'Overige'},
     {id:'log',label:'Aanpassingslog',group:'Overige'},
     {id:'import',label:'Import/Export JSON',group:'Overige'},
