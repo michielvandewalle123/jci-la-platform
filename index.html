@@ -1208,7 +1208,6 @@ function rBezoek(){
       </div>
       ${canPlan?`<button class="btn btn-primary btn-sm" onclick="S.visitEditId=null;S.visitModal={};render()">${ICO.plus} ${t('bezoek_toevoegen')}</button>`:''}
     </div>
-    ${rCalSyncCard()}
     <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
       ${['alle','gepland','bezocht','afgelast'].map(s=>`<button class="seg-btn ${filterStatus===s?'active':''}" onclick="S.visitFilter='${s}';render()">${s==='alle'?t('alle'):statusLabel[s]||s}${s!=='alle'?` (${counts[s]||0})`:''}</button>`).join('')}
     </div>
@@ -2264,6 +2263,17 @@ function rJciAvs(){
     }).join('')}
   </div>`;}
 
+function sortJciAv(col){
+  const s=S.jciAvSort;
+  if(s&&s.col===col){
+    if(s.dir==='asc'){s.dir='desc';}
+    else{S.jciAvSort=null;} // derde klik: terug naar standaardvolgorde (per provincie)
+  } else {
+    S.jciAvSort={col,dir:'asc'};
+  }
+  render();
+}
+
 function rJciAvOverzicht(av){
   const status=DB.jciAvStatus?.[av.id]||{};
   const today=nowStr();
@@ -2275,6 +2285,21 @@ function rJciAvOverzicht(av){
     const vz=DB.vz[afd]||{};
     return{afd,st,stem,receivedVm,effStem,vz};
   });
+  // Sorteren op aangeklikte kolom (standaard = provincievolgorde)
+  const sc=S.jciAvSort||{};
+  if(sc.col){
+    const dir=sc.dir==='desc'?-1:1;
+    const key={
+      afd:r=>r.afd.replace('JCI ','').toLowerCase(),
+      vz:r=>(r.vz.naam||'').toLowerCase(),
+      stem:r=>r.stem,
+      status:r=>({aanwezig:0,verontschuldigd:1,afwezig:2,onbekend:3}[r.st.status]??9),
+      volmacht:r=>(r.st.volmachtAan||r.receivedVm[0]||'').toLowerCase(),
+      eff:r=>r.effStem
+    }[sc.col];
+    if(key)rows.sort((a,b)=>{const ka=key(a),kb=key(b);return(ka<kb?-1:ka>kb?1:0)*dir;});
+  }
+  const arr=c=>sc.col===c?(sc.dir==='desc'?' ▼':' ▲'):'';
   const totEff=rows.reduce((s,r)=>s+r.effStem,0);
   const totMax=rows.reduce((s,r)=>s+r.stem,0);
 
@@ -2291,8 +2316,8 @@ function rJciAvOverzicht(av){
     <div style="overflow-x:auto;">
     <table class="dt" style="font-size:9px;">
       <thead><tr>
-        <th>Afdeling</th><th>${t('voorzitter')}</th>
-        <th>Stemsterkte</th><th>Status</th><th>Volmacht</th><th>Eff. stemmen</th>
+        <th style="cursor:pointer;user-select:none;white-space:nowrap;" onclick="sortJciAv('afd')">Afdeling${arr('afd')}</th><th style="cursor:pointer;user-select:none;white-space:nowrap;" onclick="sortJciAv('vz')">${t('voorzitter')}${arr('vz')}</th>
+        <th style="cursor:pointer;user-select:none;white-space:nowrap;" onclick="sortJciAv('stem')">Stemsterkte${arr('stem')}</th><th style="cursor:pointer;user-select:none;white-space:nowrap;" onclick="sortJciAv('status')">Status${arr('status')}</th><th style="cursor:pointer;user-select:none;white-space:nowrap;" onclick="sortJciAv('volmacht')">Volmacht${arr('volmacht')}</th><th style="cursor:pointer;user-select:none;white-space:nowrap;" onclick="sortJciAv('eff')">Eff. stemmen${arr('eff')}</th>
       </tr></thead>
       <tbody>
       ${rows.map(({afd,st,stem,receivedVm,effStem,vz})=>`<tr style="${st.status==='aanwezig'?'background:rgba(29,158,117,0.05)':st.status==='verontschuldigd'?'background:rgba(239,196,15,0.04)':''}">
