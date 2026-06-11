@@ -1208,6 +1208,7 @@ function rBezoek(){
       </div>
       ${canPlan?`<button class="btn btn-primary btn-sm" onclick="S.visitEditId=null;S.visitModal={};render()">${ICO.plus} ${t('bezoek_toevoegen')}</button>`:''}
     </div>
+    ${rCalSyncCard()}
     <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
       ${['alle','gepland','bezocht','afgelast'].map(s=>`<button class="seg-btn ${filterStatus===s?'active':''}" onclick="S.visitFilter='${s}';render()">${s==='alle'?t('alle'):statusLabel[s]||s}${s!=='alle'?` (${counts[s]||0})`:''}</button>`).join('')}
     </div>
