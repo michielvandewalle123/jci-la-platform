@@ -261,7 +261,7 @@ textarea.form-input{resize:vertical;min-height:70px;}
 }
 /* Leaflet dark overrides */
 .leaflet-container{background:#162236!important;}
-.leaflet-tile{filter:brightness(0.7) saturate(0.6);}
+.leaflet-tile-pane{filter:grayscale(1) contrast(1.05);-webkit-filter:grayscale(1) contrast(1.05);}
 .leaflet-popup-content-wrapper{background:var(--card2);color:var(--text);border:1px solid var(--border2);border-radius:8px;font-family:var(--font);font-size:12px;}
 .leaflet-popup-tip{background:var(--card2);}
 .leaflet-popup-close-button{color:var(--text2)!important;}
@@ -299,9 +299,20 @@ const DIST={
   "Limburg":["JCI Genk","JCI Haspengouw","JCI Hasselt"]
 };
 const ALL=Object.values(DIST).flat();
+// Verdwenen/inactieve afdelingen die NIET in DIST staan, per provincie — nodig zodat provincie-filters ook hun historiek meenemen.
+const EXTRA_DIST={
+  "Antwerpen":["JCI Antwerpen @ de stroom","JCI Gheel-en-Thals","JCI Heist-op-den-Berg","JCI Kempen"],
+  "Oost-Vlaanderen":["JCI Dendermonde","JCI Lokeren","JCI Zottegem"],
+  "West-Vlaanderen":["JCI Diksmuide","JCI Ieper-Poperinge-Wervik","JCI Knokke-Heist"],
+  "Vlaams-Brabant & Brussel":["JCI Brussels Airport","JCI Tienen","JCI West-Brabant"],
+  "Limburg":["JCI Beringen*West-Limburg","JCI Maasland","JCI Tongeren"]
+};
+// Afdelingen van een provincie inclusief verdwenen afdelingen (of alle 43 bij 'alle').
+function provAfds(prov){ if(prov==="alle")return afdsWithInactive(); return (DIST[prov]||ALL).concat(EXTRA_DIST[prov]||[]); }
 const SUPER="michiel.vandewalle@jcivlaanderen.be";
 const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,gebruikers:0,log:0,import:0},localBestuur:{avEigen:1,avAnder:1,afdEigen:1,afdAnder:0,ledenEigen:1,ledenAnder:0,jciAvBeheer:0,jciAvEigen:1,jciAvAnder:0,kaart:1,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0},lid:{avEigen:1,avAnder:0,afdEigen:0,afdAnder:0,ledenEigen:0,ledenAnder:0,jciAvBeheer:0,jciAvEigen:0,jciAvAnder:0,kaart:0,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0}};
-const VERSION={num:"2.4",datum:"02/06/2026",changes:[
+const VERSION={num:"2.5",datum:"11/06/2026",changes:[
+  {v:"2.5",datum:"11/06/2026",items:["Test-/dev-omgeving: aparte dev-site met eigen database; Admin-snellogin verborgen op de test-site","LA info-tab: gedeelde info & links voor alle afdelingen","Agenda-sync: drie iCal-feeds in 'Mijn profiel' (eigen AV's, andere AV's, AV's waar ik aanwezig ben)","Ledenhistoriek 2004-2025 geïmporteerd; 16 verdwenen afdelingen toegevoegd als inactief","Filters Actief / Inactief / Alle op Afdelingen, Kaart en Leden","Kaartlocaties beschermd tegen import (handmatige pinnen blijven bewaard)","Grijswaarden-kaart met gekleurde afdeling-bolletjes","Nette grafiek-tooltips (datum + ledenaantal) + 0-tellingen tijdens inactiviteit","Overdracht-herinnering wanneer het werkingsjaar bijna eindigt","JCI-Vlaanderen-AV: aanwezigheid melden met stemsterkte-telling en volmacht","Jaartallen op de x-as van de 'In de tijd'-grafiek","In de tijd-grafiek: weergave 'Actief en inactief' — gestapeld met inactieve afdelingen in grijs","Grafiek-knoppenbalk overzichtelijker: groepen met labels en scheidingslijnen, Afdelingen-filter erbij; actieve knop licht nu correct geel op","Bugfix: provincie-filter in de tijd-grafiek neemt nu ook verdwenen afdelingen mee (split toonde voorheen geen inactief-band per provincie)"]},
   {v:"2.4",datum:"02/06/2026",items:["Rechten-audit: volledige app respecteert nu de rechtentabel i.p.v. rolnamen (schermguards, rij-scoping, knop-gating)","Navigatie verbergt schermen per recht voor álle rollen; admin-schermen op gebruikers/log/import","Bezoekplanning herwerkt: 'wie is aanwezig per lokale AV' met statuslabels","Aanwezig melden gekoppeld aan AV-schrijfrecht (canAttend)","Eigen profiel via initialen-bolletje: voornaam, familienaam, gsm, werkingsjaar gepind + wachtwoord","Ledengrafiek per afdeling hoger + alle namen leesbaar (y-as 'JCI afdelingen')","Grafieken in de tijd met rechte lijnen","Meertaligheid FR/EN: maanden + tientallen teksten vertaald (154 keys per taal)","Kalender: dag wordt weer ontkleurd bij deselecteren aanwezigheid","Nav-icoon 'AV JCI Vlaanderen' = users"]},
   {v:"2.3",datum:"30/05/2026",items:["Bugfix: 56+ dubbele functies verwijderd (betere prestaties)","Beveiliging: doRolChange/rLog/importData/stemsterkte beveiligd","Import/Export tab enkel zichtbaar voor admin","Toegangscontrole rLog versterkt"]},
   {v:"2.2",datum:"30/05/2026",items:["Bezoekplanning persoonlijk + kalender geel bij bezoekdag","Login JCI logo","Notities persoonlijk + kolom hernoemd","Testdata: Kortrijk lustrum 2027-28, Waregem, Tom Boonen","Stemsterkte in afdelingenlijst","Werkjaar onder afd naam in lijst","Leden toevoegen scroll-fix","Ledentellingknop 2 mannetjes","Bewerk afdeling tooltip","AV agenda+plus icoon","Laatste kolom verwijderd","Admin ledentelling beheren","Links overal naar afdelingen","Stemsterkte bewerkbaar in afd-info"]},
@@ -327,7 +338,7 @@ const T={
     log:"Aanpassingslog",uitloggen:"Uitloggen",wachtwoord:"Wachtwoord wijzigen",
     toevoegen:"Toevoegen",opslaan:"Opslaan",annuleren:"Annuleren",sluiten:"Sluiten",
     laInfo:"LA info",la_item_toevoegen:"Info toevoegen",la_item_bewerken:"Info bewerken",la_titel_veld:"Titel",la_tekst_veld:"Tekst",la_links_veld:"Links",la_link_label:"Linktekst",la_link_url:"URL (https://…)",la_link_toevoegen:"Link toevoegen",la_leeg:"Nog geen info gedeeld.",la_verwijder_bevestig:"Dit info-item verwijderen?",la_titel_verplicht:"Geef een titel in.",la_door:"door",
-    cal_sync_titel:"Agenda synchroniseren",cal_sync_uitleg:"Abonneer je in Google Agenda op je persoonlijke feed met de lokale AV's waarop je aanwezig staat. Nieuwe of gewijzigde aanwezigheden verschijnen automatisch (Google ververst periodiek).",cal_sync_hoe:"In Google Agenda (desktop): naast 'Andere agenda's' op + klikken → 'Inschrijven via URL' → de link hieronder plakken.",cal_genereer:"Genereer mijn agenda-link",cal_kopieer:"Kopieer",cal_gekopieerd:"Gekopieerd!",cal_vernieuw:"Vernieuw link",cal_intrekken:"Intrekken",cal_vernieuw_bevestig:"Een nieuwe link maken? De oude link stopt dan met werken.",cal_intrekken_bevestig:"De agenda-link intrekken? Het abonnement stopt dan met werken.",
+    cal_sync_titel:"Agenda synchroniseren",cal_nav:"Agenda-sync",geen_toegang:"Geen toegang",cal_sync_uitleg:"Abonneer je in Google Agenda op je persoonlijke feed met de lokale AV's waarop je aanwezig staat. Nieuwe of gewijzigde aanwezigheden verschijnen automatisch (Google ververst periodiek).",cal_sync_hoe:"In Google Agenda (desktop): naast 'Andere agenda's' op + klikken → 'Inschrijven via URL' → de link hieronder plakken.",cal_genereer:"Genereer mijn agenda-link",cal_kopieer:"Kopieer",cal_gekopieerd:"Gekopieerd!",cal_vernieuw:"Vernieuw link",cal_intrekken:"Intrekken",cal_vernieuw_bevestig:"Een nieuwe link maken? De oude link stopt dan met werken.",cal_intrekken_bevestig:"De agenda-link intrekken? Het abonnement stopt dan met werken.",cal_geen_kalenders:"Geen kalenders beschikbaar voor jouw functie.",cal_feed_eigen:"AV's van mijn afdeling",cal_feed_eigen_desc:"Alle AV's van je eigen afdeling.",cal_feed_ander:"AV's van andere afdelingen",cal_feed_ander_desc:"Alle AV's behalve die van je eigen afdeling.",cal_feed_aanwezig:"AV's waar ik aanwezig ben",cal_feed_aanwezig_desc:"Enkel de AV's waarop jij als aanwezig staat.",
     afdeling:"Afdeling",datum:"Datum",uur:"Uur",locatie:"Locatie",adres:"Adres",
     voorzitter:"Voorzitter",leden_lbl:"Leden",kandidaten:"Kandidaten",kand_abbr:"kand.",peildatum:"Ledentelling",
     notities:"Notities",bezoekplan:"Bezoekplanning",
@@ -384,7 +395,7 @@ const T={
     log:"Journal des modifications",uitloggen:"Se déconnecter",wachtwoord:"Changer mot de passe",
     toevoegen:"Ajouter",opslaan:"Enregistrer",annuleren:"Annuler",sluiten:"Fermer",
     laInfo:"Infos LA",la_item_toevoegen:"Ajouter une info",la_item_bewerken:"Modifier l'info",la_titel_veld:"Titre",la_tekst_veld:"Texte",la_links_veld:"Liens",la_link_label:"Texte du lien",la_link_url:"URL (https://…)",la_link_toevoegen:"Ajouter un lien",la_leeg:"Aucune info partagée pour le moment.",la_verwijder_bevestig:"Supprimer cet élément d'info ?",la_titel_verplicht:"Indiquez un titre.",la_door:"par",
-    cal_sync_titel:"Synchroniser l'agenda",cal_sync_uitleg:"Abonnez-vous dans Google Agenda à votre flux personnel reprenant les AG locales auxquelles vous êtes présent. Les présences nouvelles ou modifiées apparaissent automatiquement (Google actualise périodiquement).",cal_sync_hoe:"Dans Google Agenda (ordinateur) : à côté de « Autres agendas », cliquez sur + → « S'abonner à l'aide d'une URL » → collez le lien ci-dessous.",cal_genereer:"Générer mon lien d'agenda",cal_kopieer:"Copier",cal_gekopieerd:"Copié !",cal_vernieuw:"Renouveler le lien",cal_intrekken:"Révoquer",cal_vernieuw_bevestig:"Créer un nouveau lien ? L'ancien cessera de fonctionner.",cal_intrekken_bevestig:"Révoquer le lien d'agenda ? L'abonnement cessera de fonctionner.",
+    cal_sync_titel:"Synchroniser l'agenda",cal_nav:"Sync agenda",geen_toegang:"Pas d'accès",cal_sync_uitleg:"Abonnez-vous dans Google Agenda à votre flux personnel reprenant les AG locales auxquelles vous êtes présent. Les présences nouvelles ou modifiées apparaissent automatiquement (Google actualise périodiquement).",cal_sync_hoe:"Dans Google Agenda (ordinateur) : à côté de « Autres agendas », cliquez sur + → « S'abonner à l'aide d'une URL » → collez le lien ci-dessous.",cal_genereer:"Générer mon lien d'agenda",cal_kopieer:"Copier",cal_gekopieerd:"Copié !",cal_vernieuw:"Renouveler le lien",cal_intrekken:"Révoquer",cal_vernieuw_bevestig:"Créer un nouveau lien ? L'ancien cessera de fonctionner.",cal_intrekken_bevestig:"Révoquer le lien d'agenda ? L'abonnement cessera de fonctionner.",cal_geen_kalenders:"Aucun agenda disponible pour votre fonction.",cal_feed_eigen:"AG de ma section",cal_feed_eigen_desc:"Toutes les AG de votre propre section.",cal_feed_ander:"AG des autres sections",cal_feed_ander_desc:"Toutes les AG sauf celles de votre section.",cal_feed_aanwezig:"AG où je suis présent",cal_feed_aanwezig_desc:"Uniquement les AG où vous êtes inscrit comme présent.",
     afdeling:"Section",datum:"Date",uur:"Heure",locatie:"Lieu",adres:"Adresse",
     voorzitter:"Président(e)",leden_lbl:"Membres",kandidaten:"Candidats",kand_abbr:"cand.",peildatum:"Comptage des membres",
     notities:"Notes",bezoekplan:"Planning de visites",
@@ -441,7 +452,7 @@ const T={
     log:"Change log",uitloggen:"Log out",wachtwoord:"Change password",
     toevoegen:"Add",opslaan:"Save",annuleren:"Cancel",sluiten:"Close",
     laInfo:"LA info",la_item_toevoegen:"Add info",la_item_bewerken:"Edit info",la_titel_veld:"Title",la_tekst_veld:"Text",la_links_veld:"Links",la_link_label:"Link text",la_link_url:"URL (https://…)",la_link_toevoegen:"Add link",la_leeg:"No info shared yet.",la_verwijder_bevestig:"Delete this info item?",la_titel_verplicht:"Please enter a title.",la_door:"by",
-    cal_sync_titel:"Sync to calendar",cal_sync_uitleg:"Subscribe in Google Calendar to your personal feed of the local GAs you're attending. New or changed attendances appear automatically (Google refreshes periodically).",cal_sync_hoe:"In Google Calendar (desktop): next to 'Other calendars' click + → 'Subscribe from URL' → paste the link below.",cal_genereer:"Generate my calendar link",cal_kopieer:"Copy",cal_gekopieerd:"Copied!",cal_vernieuw:"Refresh link",cal_intrekken:"Revoke",cal_vernieuw_bevestig:"Create a new link? The old one will stop working.",cal_intrekken_bevestig:"Revoke the calendar link? The subscription will stop working.",
+    cal_sync_titel:"Sync to calendar",cal_nav:"Calendar sync",geen_toegang:"No access",cal_sync_uitleg:"Subscribe in Google Calendar to your personal feed of the local GAs you're attending. New or changed attendances appear automatically (Google refreshes periodically).",cal_sync_hoe:"In Google Calendar (desktop): next to 'Other calendars' click + → 'Subscribe from URL' → paste the link below.",cal_genereer:"Generate my calendar link",cal_kopieer:"Copy",cal_gekopieerd:"Copied!",cal_vernieuw:"Refresh link",cal_intrekken:"Revoke",cal_vernieuw_bevestig:"Create a new link? The old one will stop working.",cal_intrekken_bevestig:"Revoke the calendar link? The subscription will stop working.",cal_geen_kalenders:"No calendars available for your function.",cal_feed_eigen:"GAs of my chapter",cal_feed_eigen_desc:"All GAs of your own chapter.",cal_feed_ander:"GAs of other chapters",cal_feed_ander_desc:"All GAs except those of your own chapter.",cal_feed_aanwezig:"GAs I'm attending",cal_feed_aanwezig_desc:"Only the GAs where you're registered as present.",
     afdeling:"Chapter",datum:"Date",uur:"Time",locatie:"Location",adres:"Address",
     voorzitter:"President",leden_lbl:"Members",kandidaten:"Candidates",kand_abbr:"cand.",peildatum:"Member count",
     notities:"Notes",bezoekplan:"Visit planning",
@@ -565,7 +576,7 @@ let S={view:"login",user:null,role:null,afd:null,
   editUserEmail:null,noteAfd:null,
   chartView:"afd",chartType:"leden",chartProv:"alle",
   afdMapDragMode:false,
-  chartsInited:false,bulkLedenParsed:[],logFilterAfd:'alle',logFilterType:'alle',importMsg:null,viewAs:null,pwModal:false,pwErr:'',pwOk:'',lang:'nl',visitModal:null,avNotesId:null,chartTijdAfd:'',chartTijdProv:'alle',afdDetail:null,visitEditId:null,avSortMode:'chronologisch',avFilterAfd:'alle',avFilterPeriod:'komende',avFilterWj:'alle',avFilterVan:'',avFilterTot:'',avFilterBezocht:'alle',afdChartType:'leden',inaktiefAfd:null,afdFilterAktief:'alle',avModalDatum:'',jciAvTab:'upcoming',jciAvEdit:null,jciAvDetail:null,jciAvDatum:'',jciVolmachtAv:null,afdWerkjaar:null,showWjDd:null,afdSortMode:'naam',afdGroupMode:'provincie',avListTab:'lijst',usrTab:'gebruikers',usrZoek:'',usrSort:'afd',usrSortDir:'asc',rolPopupUser:null,overdrachtAfd:null,lhInfoIdx:null,showCredits:false,profielTab:'gegevens',profielErr:'',profielOk:''
+  chartsInited:false,bulkLedenParsed:[],logFilterAfd:'alle',logFilterType:'alle',importMsg:null,viewAs:null,pwModal:false,pwErr:'',pwOk:'',lang:'nl',visitModal:null,avNotesId:null,chartTijdAfd:'',chartTijdProv:'alle',afdDetail:null,visitEditId:null,avSortMode:'chronologisch',avFilterAfd:'alle',avFilterPeriod:'komende',avFilterWj:'alle',avFilterVan:'',avFilterTot:'',avFilterBezocht:'alle',afdChartType:'leden',inaktiefAfd:null,afdFilterAktief:'aktief',avModalDatum:'',jciAvTab:'upcoming',jciAvEdit:null,jciAvDetail:null,jciAvDatum:'',jciVolmachtAv:null,afdWerkjaar:null,showWjDd:null,afdSortMode:'naam',afdGroupMode:'provincie',avListTab:'lijst',usrTab:'gebruikers',usrZoek:'',usrSort:'afd',usrSortDir:'asc',rolPopupUser:null,overdrachtAfd:null,lhInfoIdx:null,showCredits:false,profielTab:'gegevens',profielErr:'',profielOk:''
 };
 let leafletAfdMap=null,chartInst=null,afdMapMarkers={};
 
@@ -1231,40 +1242,50 @@ function rBezoek(){
   </div>`;}
 
 // ═══════════════════════════════════════════
-// AGENDA-SYNC (iCal-feed per gebruiker)
+// AGENDA-SYNC (iCal-feeds per gebruiker, in 'Mijn profiel')
 // ═══════════════════════════════════════════
-// Elke gebruiker heeft een persoonlijk, onraadbaar token (DB.calTokens[user]).
-// De Netlify-functie /.netlify/functions/calendar?token=... levert een .ics-feed
-// met de lokale AV's waarop die persoon aanwezig staat (DB.visits, by===user,
-// status != afgelast). Eénrichting: app → agenda. Google ververst periodiek.
+// Eén persoonlijk, onraadbaar token (DB.calTokens[user]) bedient meerdere feeds
+// via een type-parameter. De Netlify-functie /.netlify/functions/calendar?token=…&type=…
+// levert per type een .ics-feed en controleert server-side de rechten:
+//   eigen    -> AV's van de eigen afdeling          (recht avEigen ro)
+//   ander    -> AV's van andere afdelingen          (recht avAnder ro)
+//   aanwezig -> AV's waarop de persoon aanwezig is   (recht bezoek ro; uit DB.visits)
+// Eénrichting: app -> agenda. Google ververst periodiek.
 function calToken(){return(DB.calTokens&&DB.calTokens[S.user])||null;}
-function calUrl(){var tk=calToken();return tk?(location.origin+'/.netlify/functions/calendar?token='+encodeURIComponent(tk)):'';}
+function calUrlType(type){var tk=calToken();return tk?(location.origin+'/.netlify/functions/calendar?token='+encodeURIComponent(tk)+'&type='+type):'';}
 function genCalToken(){if(!S.user)return;if(!DB.calTokens)DB.calTokens={};DB.calTokens[S.user]=genTok()+genTok();sdb();render();}
 function revokeCalToken(){if(DB.calTokens)delete DB.calTokens[S.user];sdb();render();}
-function copyCalUrl(){var el=document.getElementById('cal-url');if(!el)return;try{el.focus();el.select&&el.select();}catch(e){}try{if(navigator.clipboard)navigator.clipboard.writeText(el.value);else document.execCommand&&document.execCommand('copy');}catch(e){}}
-function rCalSyncCard(){
-  if(!S.user)return'';
-  var tk=calToken();
-  return`<div class="card" style="margin-bottom:14px;border-left:2px solid #EFC40F;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-      <span style="color:#EFC40F;display:inline-flex;">${ICO.kal}</span>
-      <div style="font-weight:700;font-size:13px;">${t('cal_sync_titel')}</div>
+function copyById(id){var el=document.getElementById(id);if(!el)return;try{el.focus();el.select&&el.select();}catch(e){}try{if(navigator.clipboard)navigator.clipboard.writeText(el.value);else document.execCommand&&document.execCommand('copy');}catch(e){}}
+function calFeedRow(label,desc,type){
+  var id='cal-url-'+type;
+  return`<div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+    <div style="font-size:12px;font-weight:600;color:#fff;">${escHtml(label)}</div>
+    <div style="font-size:10px;color:var(--text2);margin:2px 0 6px;">${escHtml(desc)}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+      <input class="form-input" id="${id}" readonly value="${escHtml(calUrlType(type))}" style="flex:1;min-width:200px;font-size:10px;" onclick="this.select()"/>
+      <button class="btn btn-sm btn-primary" onclick="copyById('${id}')">${t('cal_kopieer')}</button>
     </div>
-    <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">${t('cal_sync_uitleg')}</div>
-    ${tk?`
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-        <input class="form-input" id="cal-url" readonly value="${escHtml(calUrl())}" style="flex:1;min-width:220px;font-size:11px;" onclick="this.select()"/>
-        <button class="btn btn-sm btn-primary" onclick="copyCalUrl()">${t('cal_kopieer')}</button>
-      </div>
-      <div style="font-size:10px;color:var(--text2);margin-top:8px;">${t('cal_sync_hoe')}</div>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button class="btn btn-sm" onclick="if(confirm(t('cal_vernieuw_bevestig')))genCalToken()">${t('cal_vernieuw')}</button>
-        <button class="btn btn-sm btn-danger" onclick="if(confirm(t('cal_intrekken_bevestig')))revokeCalToken()">${t('cal_intrekken')}</button>
-      </div>
-    `:`
-      <button class="btn btn-sm btn-primary" onclick="genCalToken()">${ICO.kal} ${t('cal_genereer')}</button>
-    `}
   </div>`;
+}
+function rProfielKalender(afd){
+  if(!S.user)return'';
+  var eigenOK=hasRecht('avEigen','ro')&&!!afd;
+  var anderOK=hasRecht('avAnder','ro');
+  var aanwezigOK=hasRecht('bezoek','ro');
+  if(!eigenOK&&!anderOK&&!aanwezigOK)return`<div style="font-size:12px;color:var(--text2);padding:6px 0;">${t('cal_geen_kalenders')}</div>`;
+  var tk=calToken();
+  if(!tk)return`<div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5;">${t('cal_sync_uitleg')}</div>
+      <button class="btn btn-sm btn-primary" onclick="genCalToken()">${ICO.kal} ${t('cal_genereer')}</button>`;
+  var rows='';
+  if(eigenOK)rows+=calFeedRow(t('cal_feed_eigen'),t('cal_feed_eigen_desc'),'eigen');
+  if(anderOK)rows+=calFeedRow(t('cal_feed_ander'),t('cal_feed_ander_desc'),'ander');
+  if(aanwezigOK)rows+=calFeedRow(t('cal_feed_aanwezig'),t('cal_feed_aanwezig_desc'),'aanwezig');
+  return`<div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.5;">${t('cal_sync_hoe')}</div>
+    ${rows}
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-sm" onclick="if(confirm(t('cal_vernieuw_bevestig')))genCalToken()">${t('cal_vernieuw')}</button>
+      <button class="btn btn-sm btn-danger" onclick="if(confirm(t('cal_intrekken_bevestig')))revokeCalToken()">${t('cal_intrekken')}</button>
+    </div>`;
 }
 
 function rVisitModal(){
@@ -1627,7 +1648,11 @@ function initAfdDetailChart(){
   if(chartType!=='leden')datasets.push({label:t('kandidaten'),data:xPos.map((x,i)=>({x,y:kData[i]})),showLine:true,borderColor:"#EFC40F",backgroundColor:"rgba(239,196,15,0.1)",fill:false,tension:0,pointRadius:3,pointBackgroundColor:"#EFC40F"});
   const existing=Chart.getChart(canvas);if(existing)existing.destroy();
   new Chart(canvas,{type:"scatter",data:{datasets},options:{responsive:true,
-    plugins:{legend:{display:chartType==='beide',labels:{color:"#8AB4CC",font:{size:9}}}},
+    plugins:{legend:{display:chartType==='beide',labels:{color:"#8AB4CC",font:{size:9}}},
+      tooltip:{callbacks:{
+        title:function(items){var xx=items[0].parsed.x;var idx=xPos.findIndex(function(p){return Math.abs(p-xx)<0.01;});return idx>-1?labels[idx]:'';},
+        label:function(item){return item.dataset.label+': '+item.parsed.y;}
+      }}},
     scales:{
       x:{type:"linear",min:0,max:100,ticks:{color:"#8AB4CC",font:{size:8},callback:function(val){const idx=xPos.findIndex(x=>Math.abs(x-val)<3);return idx>-1?labels[idx]:'';}},grid:{color:"rgba(45,39,102,0.3)"}},
       y:{ticks:{color:"#8AB4CC",font:{size:8}},beginAtZero:true,grid:{color:"rgba(45,39,102,0.3)"}},
@@ -1683,14 +1708,14 @@ function rVzLeden(){
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
         <div class="card-title" style="margin:0;flex:1;">${t('grafiek')}</div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="seg-btn ${S.chartType==='leden'?'active':''}" onclick="S.chartType='leden';initCharts()">${t('leden_lbl')}</button>
-          <button class="seg-btn ${S.chartType==='kandidaten'?'active':''}" onclick="S.chartType='kandidaten';initCharts()">${t('kandidaten')}</button>
-          <button class="seg-btn ${S.chartType==='beide'?'active':''}" onclick="S.chartType='beide';initCharts()">${t('leden_lbl')} + ${t('kandidaten')}</button>
+          <button class="seg-btn ${S.chartType==='leden'?'active':''}" onclick="S.chartType='leden';render()">${t('leden_lbl')}</button>
+          <button class="seg-btn ${S.chartType==='kandidaten'?'active':''}" onclick="S.chartType='kandidaten';render()">${t('kandidaten')}</button>
+          <button class="seg-btn ${S.chartType==='beide'?'active':''}" onclick="S.chartType='beide';render()">${t('leden_lbl')} + ${t('kandidaten')}</button>
         </div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="seg-btn ${S.chartView==='afd'?'active':''}" onclick="S.chartView='afd';initCharts()">${t('per_afd')}</button>
-          <button class="seg-btn ${S.chartView==='prov'?'active':''}" onclick="S.chartView='prov';initCharts()">${t('per_prov')}</button>
-          <button class="seg-btn ${S.chartView==='tijd'?'active':''}" onclick="S.chartView='tijd';initCharts()">${t('in_tijd')}</button>
+          <button class="seg-btn ${S.chartView==='afd'?'active':''}" onclick="S.chartView='afd';render()">${t('per_afd')}</button>
+          <button class="seg-btn ${S.chartView==='prov'?'active':''}" onclick="S.chartView='prov';render()">${t('per_prov')}</button>
+          <button class="seg-btn ${S.chartView==='tijd'?'active':''}" onclick="S.chartView='tijd';render()">${t('in_tijd')}</button>
         </div>
       </div>
       <div class="chart-wrap" style="height:480px;"><canvas id="leden-chart"></canvas></div>
@@ -2997,10 +3022,8 @@ function rAfdSortTopbar(){
   var sm=S.afdSortMode||"naam";
   var h="<div class=\"topbar\"><div><div class=\"page-title\">";
   h+=t("afdelingen")+"</div>";
-  h+="<div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;\">";
-  var filters=[["alle",t("alle")+" ("+ALL.length+")"],["aktief",t("actief")+" ("+ALL.filter(function(a){return DB.afdInfo[a]&&DB.afdInfo[a].aktief!==false;}).length+")"],["inaktief","Inactief ("+ALL.filter(function(a){return DB.afdInfo[a]&&DB.afdInfo[a].aktief===false;}).length+")"]];
-  filters.forEach(function(f){h+="<button class=\"seg-btn "+(af===f[0]?"active ":"")+"\" data-af=\""+f[0]+"\" onclick=\"S.afdFilterAktief=this.dataset.af;render()\" style=\"font-size:9px;\">"+f[1]+"</button>";});
-  h+="</div><div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;overflow-x:auto;scrollbar-width:none;\">";
+  h+="<div style=\"margin-top:4px;\">"+rAktiefFilterButtons()+"</div>";
+  h+="<div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;overflow-x:auto;scrollbar-width:none;\">";
   h+="<span style=\"font-size:9px;color:rgba(255,255,255,0.3);\">Groep:</span>";
   [["provincie","Per provincie"],["alle","Alles samen"]].forEach(function(g){h+="<button class=\"seg-btn "+(gm===g[0]?"active":"")+"\" data-gm=\""+g[0]+"\" onclick=\"S.afdGroupMode=this.dataset.gm;render()\" style=\"font-size:9px;\">"+g[1]+"</button>";});
   h+="<span style=\"font-size:9px;color:rgba(255,255,255,0.3);margin-left:6px;\">Sorteer:</span>";
@@ -3154,7 +3177,9 @@ function rAfdMap(){
   if(!hasRecht('kaart','ro'))return`<div class="page active"><div class="topbar"><div class="page-title">${t('afdKaart')}</div></div><div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_toegang_scherm')}</div></div></div>`;
   return`<div class="page active">
     <div class="topbar">
-      <div><div class="page-title">${t('afdKaart')}</div><div class="page-sub">Locaties van alle 27 afdelingen in Vlaanderen</div></div>
+      <div><div class="page-title">${t('afdKaart')}</div><div class="page-sub">Locaties van de afdelingen in Vlaanderen</div>
+        <div style="margin-top:4px;">${rAktiefFilterButtons()}</div>
+      </div>
       <div style="display:flex;gap:8px;align-items:center;">
         ${hasRecht('kaart','rw')?`<button class="btn btn-sm ${S.afdMapDragMode?'btn-primary':''}" onclick="toggleDragMode()">
           ${ICO.pencil} ${S.afdMapDragMode?'Bewerken actief':'Locaties aanpassen'}
@@ -3192,7 +3217,7 @@ function initAfdMapReadonly(){if(typeof L==="undefined"){document.getElementById
   leafletAfdMap=L.map("map-afd-container",{center:[50.95,4.15],zoom:8});
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:18}).addTo(leafletAfdMap);
   const today=nowStr();
-  ALL.forEach(afd=>{
+  filterByAktief(afdsWithInactive(),S.afdFilterAktief||'aktief').forEach(afd=>{
     const coord=getCoords(afd);const dist=gt(afd);const color=DIST_COLORS[dist]||"#888";
     const info=DB.afdInfo[afd]||{};const vz=DB.vz[afd]||{};
     const vzNaam=vz.naam||"—";const vzGsmRaw=vz.gsm||"";const vzGsm=vzGsmRaw||"—";const vzWJ=werkjaarLabel(vz.werkjaar||'kalender');
@@ -3214,7 +3239,7 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:18}).addTo(leafletAfdMap);
 
   const today=nowStr();
-  ALL.forEach(afd=>{
+  filterByAktief(afdsWithInactive(),S.afdFilterAktief||'aktief').forEach(afd=>{
     const coord=getCoords(afd);
     const dist=gt(afd);
     const color=DIST_COLORS[dist]||"#888";
@@ -3247,6 +3272,7 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
       const ll=e.target.getLatLng();
       if(!DB.afdInfo[afd])DB.afdInfo[afd]={ledenHistory:[],kandidatenHistory:[]};
       DB.afdInfo[afd].coords=[ll.lat,ll.lng];
+      DB.afdInfo[afd].coordsSet=true;
       sdb();
       marker.bindPopup(buildPopupHtml(`<br><span style="color:#4A9EFF;">Locatie bijgewerkt ✓</span>`),{maxWidth:240}).openPopup();
     });
@@ -3260,7 +3286,8 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
 function rLeden(){
   // Toegangsguard: minstens leesrecht op eigen of andere leden.
   if(!(hasRecht('ledenEigen','ro')||hasRecht('ledenAnder','ro')))return`<div class="page active"><div class="topbar"><div class="page-title">${t('leden')}</div></div><div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_toegang_scherm')}</div></div></div>`;
-  const vis=visibleAfdsForLeden();
+  const visBase=hasRecht('ledenAnder','ro')?afdsWithInactive():visibleAfdsForLeden();
+  const vis=filterByAktief(visBase,S.afdFilterAktief||'aktief');
   const totalLeden=vis.reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0);
   const totalKand=vis.reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0);
   return`<div class="page active">
@@ -3274,29 +3301,49 @@ function rLeden(){
       <div class="metric"><div class="metric-label">${t('afd_met_data')}</div><div class="metric-val">${vis.filter(a=>DB.afdInfo[a]?.leden).length}<small>/${vis.length}</small></div></div>
     </div>
     <div class="card" style="margin-bottom:14px;">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-        <div class="card-title" style="margin:0;flex:1;">${t('grafiek')}</div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="seg-btn ${S.chartType==='leden'?'active':''}" onclick="S.chartType='leden';initCharts()">${t('leden_lbl')}</button>
-          <button class="seg-btn ${S.chartType==='kandidaten'?'active':''}" onclick="S.chartType='kandidaten';initCharts()">${t('kandidaten')}</button>
-          <button class="seg-btn ${S.chartType==='beide'?'active':''}" onclick="S.chartType='beide';initCharts()">${t('leden_lbl')} + ${t('kandidaten')}</button>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div class="card-title" style="margin:0;">${t('grafiek')}</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;white-space:nowrap;">Afdelingen</span>
+          ${rAktiefFilterButtons()}
         </div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="seg-btn ${S.chartView==='afd'?'active':''}" onclick="S.chartView='afd';initCharts()">${t('per_afd')}</button>
-          <button class="seg-btn ${S.chartView==='prov'?'active':''}" onclick="S.chartView='prov';initCharts()">${t('per_prov')}</button>
-          <button class="seg-btn ${S.chartView==='tijd'?'active':''}" onclick="S.chartView='tijd';initCharts()">${t('in_tijd')}</button>
+        <span style="width:1px;align-self:stretch;background:var(--border2);"></span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;white-space:nowrap;">Toon</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <button class="seg-btn ${S.chartType==='leden'?'active':''}" onclick="S.chartType='leden';render()">${t('leden_lbl')}</button>
+            <button class="seg-btn ${S.chartType==='kandidaten'?'active':''}" onclick="S.chartType='kandidaten';render()">${t('kandidaten')}</button>
+            <button class="seg-btn ${S.chartType==='beide'?'active':''}" onclick="S.chartType='beide';render()">${t('leden_lbl')} + ${t('kandidaten')}</button>
+          </div>
         </div>
-        ${S.chartView==='prov'||S.chartView==='afd'?`<select class="form-input" style="width:160px;" onchange="S.chartProv=this.value;initCharts()">
+        <span style="width:1px;align-self:stretch;background:var(--border2);"></span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;white-space:nowrap;">Weergave</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <button class="seg-btn ${S.chartView==='afd'?'active':''}" onclick="S.chartView='afd';render()">${t('per_afd')}</button>
+            <button class="seg-btn ${S.chartView==='prov'?'active':''}" onclick="S.chartView='prov';render()">${t('per_prov')}</button>
+            <button class="seg-btn ${S.chartView==='tijd'?'active':''}" onclick="S.chartView='tijd';render()">${t('in_tijd')}</button>
+          </div>
+        </div>
+        ${S.chartView==='tijd'&&!S.chartTijdAfd?`<span style="width:1px;align-self:stretch;background:var(--border2);"></span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;white-space:nowrap;">Lijnen</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <button class="seg-btn ${(S.chartTijdSplit||'alle')==='alle'?'active':''}" onclick="S.chartTijdSplit='alle';render()">${t('alle')}</button>
+            <button class="seg-btn ${S.chartTijdSplit==='status'?'active':''}" onclick="S.chartTijdSplit='status';render()">Actief en inactief</button>
+          </div>
+        </div>`:''}
+        ${S.chartView==='prov'||S.chartView==='afd'?`<span style="width:1px;align-self:stretch;background:var(--border2);"></span><select class="form-input" style="width:160px;" onchange="S.chartProv=this.value;render()">
           <option value="alle" ${S.chartProv==='alle'?'selected':''}>Alle provincies</option>
           ${Object.keys(DIST).map(d=>`<option value="${d}" ${S.chartProv===d?'selected':''}>${d}</option>`).join("")}
         </select>`:""}
-        ${S.chartView==='tijd'?`<select class="form-input" style="width:160px;" onchange="S.chartProv=this.value;S.chartTijdAfd='';switchView('leden')">
+        ${S.chartView==='tijd'?`<span style="width:1px;align-self:stretch;background:var(--border2);"></span><select class="form-input" style="width:150px;" onchange="S.chartProv=this.value;S.chartTijdAfd='';render()">
           <option value="alle" ${S.chartProv==='alle'?'selected':''}>Alle provincies</option>
           ${Object.keys(DIST).map(d=>`<option value="${d}" ${S.chartProv===d?'selected':''}>${d}</option>`).join("")}
         </select>
-        <select class="form-input" style="width:160px;" onchange="S.chartTijdAfd=this.value;switchView('leden')">
+        <select class="form-input" style="width:150px;" onchange="S.chartTijdAfd=this.value;render()">
           <option value="">Alle afdelingen</option>
-          ${(S.chartProv==='alle'?ALL:DIST[S.chartProv]||ALL).map(a=>`<option value="${a}" ${S.chartTijdAfd===a?'selected':''}>${a.replace('JCI ','')}</option>`).join("")}
+          ${filterByAktief(provAfds(S.chartProv),S.afdFilterAktief||'aktief').map(a=>`<option value="${a}" ${S.chartTijdAfd===a?'selected':''}>${a.replace('JCI ','')}</option>`).join("")}
         </select>`:""}
       </div>
       <div class="chart-wrap" style="height:480px;"><canvas id="leden-chart"></canvas></div>
@@ -3341,11 +3388,15 @@ function initCharts(){
     Chart.defaults.color="#8AB4CC";Chart.defaults.borderColor="#231E52";
     const BOTH=S.chartType==="beide";
     const ledenColor="#0097D7";const kandColor="#EFC40F";
+    const aktMode=S.afdFilterAktief||'aktief';
 
     // ── TIJD VIEW ──────────────────────────────────────────────
     if(S.chartView==="tijd"){
-      let afdsFilter=S.chartProv==="alle"?ALL:DIST[S.chartProv]||ALL;
-      if(S.chartTijdAfd&&ALL.includes(S.chartTijdAfd))afdsFilter=[S.chartTijdAfd];
+      const provPool=provAfds(S.chartProv);
+      const splitMode=(S.chartTijdSplit==="status")&&!S.chartTijdAfd;
+      // In split-modus tonen we álle afdelingen (de status-filter bovenaan wordt genegeerd; splitsing gebeurt hieronder)
+      let afdsFilter=splitMode?provPool.slice():filterByAktief(provPool,aktMode);
+      if(S.chartTijdAfd&&afdsWithInactive().includes(S.chartTijdAfd))afdsFilter=[S.chartTijdAfd];
 
       const dateSet=new Set();
       afdsFilter.forEach(a=>{
@@ -3360,43 +3411,85 @@ function initCharts(){
         const filtered=(hist||[]).filter(h=>h.datum<=targetDate).sort((a,b)=>a.datum.localeCompare(b.datum));
         return filtered.length?parseInt(filtered.slice(-1)[0].val)||0:0;
       }
-      const ledenData=sortedDates.map(d=>afdsFilter.reduce((s,a)=>s+latestOnOrBefore(DB.afdInfo[a]?.ledenHistory,d),0));
-      const kandData=sortedDates.map(d=>afdsFilter.reduce((s,a)=>s+latestOnOrBefore(DB.afdInfo[a]?.kandidatenHistory,d),0));
-
       // Use real ms timestamps for proportional x-axis spacing
       const msVals=sortedDates.map(d=>new Date(d).getTime());
       const labels=sortedDates.map(d=>{const[y,m,dd]=d.split('-');return`${parseInt(dd)}/${parseInt(m)}/${y}`;});
 
-      // Build scatter datasets (type:'scatter' with showLine:true)
-      const ledenPts=msVals.map((x,i)=>({x,y:ledenData[i]}));
-      const kandPts=msVals.map((x,i)=>({x,y:kandData[i]}));
+      // Waarde per afdeling per datum, afhankelijk van de gekozen metric
+      function valAt(afd,d){
+        const inf=DB.afdInfo[afd];
+        if(S.chartType==="kandidaten")return latestOnOrBefore(inf?.kandidatenHistory,d);
+        if(S.chartType==="leden")return latestOnOrBefore(inf?.ledenHistory,d);
+        return latestOnOrBefore(inf?.ledenHistory,d)+latestOnOrBefore(inf?.kandidatenHistory,d);
+      }
 
       const datasets=[];
-      if(S.chartType!=="kandidaten"){
+      let yTitle;
+      let _actVals=null,_inactVals=null;
+
+      if(splitMode){
+        const actiefAfds=afdsFilter.filter(a=>DB.afdInfo[a]?.aktief!==false);
+        const inactiefAfds=afdsFilter.filter(a=>DB.afdInfo[a]?.aktief===false);
+        _actVals=sortedDates.map(d=>actiefAfds.reduce((s,a)=>s+valAt(a,d),0));
+        _inactVals=sortedDates.map(d=>inactiefAfds.reduce((s,a)=>s+valAt(a,d),0));
+        const actiefColor=S.chartType==="kandidaten"?kandColor:ledenColor;
+        const actiefBg=S.chartType==="kandidaten"?"rgba(239,196,15,0.18)":"rgba(0,151,215,0.20)";
+        const grijs="#9AA3B2";
+        // Onderste band = actief (gevuld tot 0); bovenste band = inactief (gestapeld bovenop, gevuld tot de actief-lijn)
         datasets.push({
-          label:t('leden_lbl'),data:ledenPts,
-          showLine:true,borderColor:ledenColor,backgroundColor:"rgba(0,151,215,0.15)",
-          fill:BOTH?'origin':true,tension:0,pointRadius:5,pointBackgroundColor:ledenColor,
-          pointHoverRadius:7,order:1
+          label:"Actief",data:msVals.map((x,i)=>({x,y:_actVals[i]})),_raw:_actVals,
+          showLine:true,borderColor:actiefColor,backgroundColor:actiefBg,
+          fill:'origin',tension:0,pointRadius:3,pointBackgroundColor:actiefColor,pointHoverRadius:6,order:2
         });
-      }
-      if(S.chartType!=="leden"){
         datasets.push({
-          label:t('kandidaten'),data:kandPts,
-          showLine:true,borderColor:kandColor,backgroundColor:"rgba(239,196,15,0.12)",
-          fill:false,tension:0,pointRadius:5,pointBackgroundColor:kandColor,
-          pointHoverRadius:7,order:2
+          label:"Inactief",data:msVals.map((x,i)=>({x,y:_actVals[i]+_inactVals[i]})),_raw:_inactVals,
+          showLine:true,borderColor:grijs,backgroundColor:"rgba(154,163,178,0.30)",
+          fill:'-1',tension:0,pointRadius:3,pointBackgroundColor:grijs,pointHoverRadius:6,order:1
         });
+        yTitle=S.chartType==="kandidaten"?t('kandidaten'):(S.chartType==="beide"?"Leden + Kandidaten":t('leden_lbl'));
+      } else {
+        const ledenData=sortedDates.map(d=>afdsFilter.reduce((s,a)=>s+latestOnOrBefore(DB.afdInfo[a]?.ledenHistory,d),0));
+        const kandData=sortedDates.map(d=>afdsFilter.reduce((s,a)=>s+latestOnOrBefore(DB.afdInfo[a]?.kandidatenHistory,d),0));
+        const ledenPts=msVals.map((x,i)=>({x,y:ledenData[i]}));
+        const kandPts=msVals.map((x,i)=>({x,y:kandData[i]}));
+        if(S.chartType!=="kandidaten"){
+          datasets.push({
+            label:t('leden_lbl'),data:ledenPts,
+            showLine:true,borderColor:ledenColor,backgroundColor:"rgba(0,151,215,0.15)",
+            fill:BOTH?'origin':true,tension:0,pointRadius:5,pointBackgroundColor:ledenColor,
+            pointHoverRadius:7,order:1
+          });
+        }
+        if(S.chartType!=="leden"){
+          datasets.push({
+            label:t('kandidaten'),data:kandPts,
+            showLine:true,borderColor:kandColor,backgroundColor:"rgba(239,196,15,0.12)",
+            fill:false,tension:0,pointRadius:5,pointBackgroundColor:kandColor,
+            pointHoverRadius:7,order:2
+          });
+        }
+        if(BOTH&&datasets.length===2){
+          // Add total line
+          datasets.push({
+            label:t('totaal'),
+            data:msVals.map((x,i)=>({x,y:ledenData[i]+kandData[i]})),
+            showLine:true,borderColor:"rgba(255,255,255,0.4)",borderDash:[5,4],
+            fill:false,tension:0,pointRadius:0,order:0
+          });
+        }
+        yTitle=BOTH?"Leden + Kandidaten":t('leden_lbl');
       }
-      if(BOTH&&datasets.length===2){
-        // Add total line
-        datasets.push({
-          label:t('totaal'),
-          data:msVals.map((x,i)=>({x,y:ledenData[i]+kandData[i]})),
-          showLine:true,borderColor:"rgba(255,255,255,0.4)",borderDash:[5,4],
-          fill:false,tension:0,pointRadius:0,order:0
-        });
-      }
+
+      // Jaartal-ticks op de x-as: forceer een tick op 1 jan van elk jaar (om de 2 jaar bij veel jaren)
+      const _firstY=parseInt(sortedDates[0].slice(0,4));
+      const _lastY=parseInt(sortedDates[sortedDates.length-1].slice(0,4));
+      const _years=[];for(let _y=_firstY;_y<=_lastY;_y++)_years.push(_y);
+      const _yStep=_years.length>16?2:1;
+      let _tickYears=_years.filter((_,i)=>i%_yStep===0);
+      if(_tickYears[_tickYears.length-1]!==_lastY)_tickYears.push(_lastY);
+      const _yearTicks=_tickYears.map(_y=>new Date(_y+"-01-01").getTime());
+      const _xMin=new Date(_firstY+"-01-01").getTime();
+      const _xMax=Math.max(msVals[msVals.length-1],new Date(_lastY+"-01-01").getTime());
 
       chartInst=new Chart(ctx,{
         type:"scatter",
@@ -3411,26 +3504,25 @@ function initCharts(){
                 const idx=msVals.findIndex(v=>v===ms);
                 return idx>-1?labels[idx]:new Date(ms).toLocaleDateString('nl-BE');
               },
-              label:item=>`${item.dataset.label}: ${item.parsed.y}`
+              label:item=>{const ds=item.dataset;const v=ds._raw?ds._raw[item.dataIndex]:item.parsed.y;return `${ds.label}: ${v}`;},
+              footer:splitMode?(items=>{const i=items[0].dataIndex;return 'Totaal: '+(_actVals[i]+_inactVals[i]);}):undefined
             }}
           },
           scales:{
             x:{
               type:"linear",
+              min:_xMin,max:_xMax,
+              afterBuildTicks:axis=>{axis.ticks=_yearTicks.map(v=>({value:v}));},
               ticks:{
-                color:"#8AB4CC",font:{size:10},maxRotation:30,
-                callback:val=>{
-                  // Show label only for actual data points
-                  const idx=msVals.findIndex(v=>Math.abs(v-val)<86400000*15);
-                  return idx>-1?labels[idx]:'';
-                }
+                color:"#8AB4CC",font:{size:10},maxRotation:0,autoSkip:false,
+                callback:val=>new Date(val).getFullYear()
               },
               grid:{color:"rgba(45,39,102,0.4)"}
             },
             y:{
               ticks:{color:"#8AB4CC",font:{size:10}},
               beginAtZero:true,
-              title:{display:true,text:BOTH?"Leden + Kandidaten":t('leden_lbl'),color:"#8AB4CC",font:{size:10}},
+              title:{display:true,text:yTitle,color:"#8AB4CC",font:{size:10}},
               grid:{color:"rgba(45,39,102,0.4)"}
             }
           }
@@ -3441,13 +3533,13 @@ function initCharts(){
 
     // ── BAR CHARTS (per afdeling / per provincie) ──────────────
     const labels=[],datasets=[];
-    let afds=S.chartProv==="alle"?ALL:DIST[S.chartProv]||ALL;
+    let afds=filterByAktief(provAfds(S.chartProv),aktMode);
     const barOpts=BOTH?{barPercentage:0.85,categoryPercentage:0.9}:{barPercentage:0.65,categoryPercentage:0.85};
 
     if(S.chartView==="prov"){
       const provLabels=Object.keys(DIST);
-      const ledenData=provLabels.map(d=>DIST[d].reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0));
-      const kandData=provLabels.map(d=>DIST[d].reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0));
+      const ledenData=provLabels.map(d=>DIST[d].filter(a=>aktiefMatch(a,aktMode)).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0));
+      const kandData=provLabels.map(d=>DIST[d].filter(a=>aktiefMatch(a,aktMode)).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0));
       const bgLeden=provLabels.map(d=>DIST_COLORS[d]+"DD");
       const bgKand=provLabels.map(d=>DIST_COLORS[d]+"66");
       if(S.chartType!=="kandidaten")datasets.push({label:t('leden_lbl'),data:ledenData,backgroundColor:bgLeden,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
@@ -3465,14 +3557,15 @@ function initCharts(){
         }
       }});
     } else {
-      const afdLabels=afds.map(a=>a.replace('JCI ',''));
-      const ledenData=afds.map(a=>parseInt(DB.afdInfo[a]?.leden||0));
-      const kandData=afds.map(a=>parseInt(DB.afdInfo[a]?.kandidaten||0));
-      const bgLeden=afds.map(a=>DIST_COLORS[gt(a)]+"DD");
-      const bgKand=afds.map(a=>DIST_COLORS[gt(a)]+"55");
+      const afds2=afds.filter(a=>parseInt(DB.afdInfo[a]?.leden||0)>0);
+      const afdLabels=afds2.map(a=>a.replace('JCI ',''));
+      const ledenData=afds2.map(a=>parseInt(DB.afdInfo[a]?.leden||0));
+      const kandData=afds2.map(a=>parseInt(DB.afdInfo[a]?.kandidaten||0));
+      const bgLeden=afds2.map(a=>DIST_COLORS[gt(a)]+"DD");
+      const bgKand=afds2.map(a=>DIST_COLORS[gt(a)]+"55");
       if(S.chartType!=="kandidaten")datasets.push({label:t('leden_lbl'),data:ledenData,backgroundColor:bgLeden,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
       if(S.chartType!=="leden")datasets.push({label:t('kandidaten'),data:kandData,backgroundColor:bgKand,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
-      const isHoriz=afds.length>10;
+      const isHoriz=afds2.length>10;
       chartInst=new Chart(ctx,{type:"bar",data:{labels:afdLabels,datasets},options:{
         responsive:true,maintainAspectRatio:false,
         indexAxis:isHoriz?"y":"x",
@@ -3581,19 +3674,21 @@ function rAfd(){
       </div>
     </div>
     ${(function(){
-      var af=S.afdFilterAktief||"alle";
+      var af=S.afdFilterAktief||"aktief";
       var gm=S.afdGroupMode||"provincie";
-      function filterAfds(arr){return sortAfds(arr.filter(function(a){return vis.indexOf(a)>=0&&(af==="aktief"?DB.afdInfo[a]&&DB.afdInfo[a].aktief!==false:af==="inaktief"?DB.afdInfo[a]&&DB.afdInfo[a].aktief===false:true);}));}
+      var visExt=vis.concat(hasRecht('afdAnder','ro')?afdsExtra():[]);
+      function filterAfds(arr){return sortAfds(arr.filter(function(a){return visExt.indexOf(a)>=0&&aktiefMatch(a,af);}));}
       if(gm==="alle"){
-        var allSorted=filterAfds(ALL);
-        return rAfdTableRows(allSorted);
+        return rAfdTableRows(filterAfds(afdsWithInactive()));
       }
-      return Object.entries(DIST).map(function(de){
-        var d=de[0];var afds=de[1];
-        var distAfds=filterAfds(afds);
+      var out=Object.entries(DIST).map(function(de){
+        var distAfds=filterAfds(de[1]);
         if(!distAfds.length)return "";
-        return rAfdTableRows(distAfds,d);
+        return rAfdTableRows(distAfds,de[0]);
       }).join("");
+      var extra=filterAfds(afdsExtra());
+      if(extra.length)out+=rAfdTableRows(extra,"Verdwenen afdelingen");
+      return out;
     })()}
   </div>`;}
 
@@ -3846,6 +3941,23 @@ function canEditAfdInfo(afd){return hasRecht('afdAnder','rw')||(afd===S.afd&&has
 function visibleAfdsForAfd(){return hasRecht('afdAnder','ro')?ALL.slice():(hasRecht('afdEigen','ro')&&S.afd?[S.afd]:[]);}
 // Idem voor leden-schermen.
 function visibleAfdsForLeden(){return hasRecht('ledenAnder','ro')?ALL.slice():(hasRecht('ledenEigen','ro')&&S.afd?[S.afd]:[]);}
+// ── Verdwenen/inactieve afdelingen (in de data, niet in DIST/ALL) ──
+// afdsExtra() = afdInfo-keys die niet in ALL staan (de toegevoegde, niet meer
+// bestaande afdelingen). afdsWithInactive() = actieve + die verdwenen afdelingen.
+// Zo verschijnen ze in de lijst/kaart/grafiek (onder Inactief/Alle) zonder de
+// AV-keuzelijsten, stemsterkte enz. te vervuilen (die blijven op ALL).
+function afdsExtra(){return Object.keys(DB.afdInfo||{}).filter(function(a){return ALL.indexOf(a)<0;});}
+function afdsWithInactive(){return ALL.concat(afdsExtra());}
+function aktiefMatch(a,mode){var act=DB.afdInfo[a]?DB.afdInfo[a].aktief!==false:true;return mode==='inaktief'?!act:mode==='alle'?true:act;}
+function filterByAktief(arr,mode){return arr.filter(function(a){return aktiefMatch(a,mode);});}
+// Herbruikbare filterknoppen: Actief (default) · Inactief · Alle (zelfde volgorde overal)
+function rAktiefFilterButtons(){
+  var af=S.afdFilterAktief||'aktief';var base=afdsWithInactive();
+  var defs=[['aktief',t('actief')+' ('+filterByAktief(base,'aktief').length+')'],['inaktief','Inactief ('+filterByAktief(base,'inaktief').length+')'],['alle',t('alle')+' ('+base.length+')']];
+  var h='<div style="display:flex;gap:4px;flex-wrap:wrap;">';
+  defs.forEach(function(f){h+='<button class="seg-btn '+(af===f[0]?'active ':'')+'" data-af="'+f[0]+'" onclick="S.afdFilterAktief=this.dataset.af;render()" style="font-size:9px;">'+f[1]+'</button>';});
+  return h+'</div>';
+}
 // Mag de huidige gebruiker de gegevens van deze afdeling aanpassen?
 // (afdAnder rw = alle afdelingen; afdEigen rw = enkel de eigen afdeling)
 function canEditAfd(afd){
@@ -4601,7 +4713,12 @@ function importData(input){
       DB.pw=obj.pw||{};
       DB.pending=obj.pending||{};
       DB.notes=obj.notes||{};
+      // Behoud zelf-geplaatste kaartlocaties: coords met coordsSet=true (door de
+      // gebruiker versleept) overleven een import en worden niet overschreven.
+      var lockedCoords={};
+      Object.keys(DB.afdInfo||{}).forEach(function(a){var i=DB.afdInfo[a];if(i&&i.coordsSet&&i.coords)lockedCoords[a]=i.coords;});
       DB.afdInfo=obj.afdInfo||{};
+      Object.keys(lockedCoords).forEach(function(a){if(DB.afdInfo[a]){DB.afdInfo[a].coords=lockedCoords[a];DB.afdInfo[a].coordsSet=true;}});
       DB.changelog=obj.changelog||[];
       DB.inaktief=obj.inaktief||[];DB.avNotes=obj.avNotes||{};DB.visits=obj.visits||[];DB.localBestuur=obj.localBestuur||{};DB.lastLogin=obj.lastLogin||{};
       // Ensure super admin is always present
@@ -4669,6 +4786,7 @@ function rProfielModal(){
     <div style="display:flex;gap:0;margin-bottom:14px;border-bottom:0.5px solid rgba(255,255,255,0.1);">
       <button onclick="S.profielTab='gegevens';S.profielErr='';S.profielOk='';render()" style="font-size:11px;padding:6px 14px;background:transparent;border:none;border-bottom:2px solid ${tab==='gegevens'?'#0097D7':'transparent'};color:${tab==='gegevens'?'#0097D7':'rgba(255,255,255,0.4)'};cursor:pointer;">${t('gegevens')}</button>
       <button onclick="S.profielTab='ww';S.pwErr='';S.pwOk='';render()" style="font-size:11px;padding:6px 14px;background:transparent;border:none;border-bottom:2px solid ${tab==='ww'?'#0097D7':'transparent'};color:${tab==='ww'?'#0097D7':'rgba(255,255,255,0.4)'};cursor:pointer;">${t('wachtwoord').split(' ')[0]}</button>
+      <button onclick="S.profielTab='kalender';S.profielErr='';S.profielOk='';render()" style="font-size:11px;padding:6px 12px;background:transparent;border:none;border-bottom:2px solid ${tab==='kalender'?'#0097D7':'transparent'};color:${tab==='kalender'?'#0097D7':'rgba(255,255,255,0.4)'};cursor:pointer;">${t('cal_nav')}</button>
     </div>
     ${tab==='gegevens'?`
       ${S.profielErr?`<div class="alert alert-red" style="margin-bottom:10px;">${S.profielErr}</div>`:""}
@@ -4692,6 +4810,9 @@ function rProfielModal(){
       <div class="modal-footer"><button class="btn" onclick="S.modal=null;render()">${t('annuleren')}</button>
         <button class="btn btn-primary" onclick="saveProfiel()">${t('opslaan')}</button>
       </div>
+    `:tab==='kalender'?`
+      ${rProfielKalender(afd)}
+      <div class="modal-footer"><button class="btn" onclick="S.modal=null;render()">${t('sluiten')}</button></div>
     `:`
       ${S.pwErr?`<div class="alert alert-red" style="margin-bottom:10px;">${S.pwErr}</div>`:""}
       ${S.pwOk?`<div class="alert alert-green" style="margin-bottom:10px;">${S.pwOk}</div>`:""}
