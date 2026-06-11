@@ -301,7 +301,8 @@ const DIST={
 const ALL=Object.values(DIST).flat();
 const SUPER="michiel.vandewalle@jcivlaanderen.be";
 const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,gebruikers:0,log:0,import:0},localBestuur:{avEigen:1,avAnder:1,afdEigen:1,afdAnder:0,ledenEigen:1,ledenAnder:0,jciAvBeheer:0,jciAvEigen:1,jciAvAnder:0,kaart:1,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0},lid:{avEigen:1,avAnder:0,afdEigen:0,afdAnder:0,ledenEigen:0,ledenAnder:0,jciAvBeheer:0,jciAvEigen:0,jciAvAnder:0,kaart:0,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0}};
-const VERSION={num:"2.4",datum:"02/06/2026",changes:[
+const VERSION={num:"2.5",datum:"11/06/2026",changes:[
+  {v:"2.5",datum:"11/06/2026",items:["Test-/dev-omgeving: aparte dev-site met eigen database; Admin-snellogin verborgen op de test-site","LA info-tab: gedeelde info & links voor alle afdelingen","Agenda-sync: drie iCal-feeds in 'Mijn profiel' (eigen AV's, andere AV's, AV's waar ik aanwezig ben)","Ledenhistoriek 2004-2025 geïmporteerd; 16 verdwenen afdelingen toegevoegd als inactief","Filters Actief / Inactief / Alle op Afdelingen, Kaart en Leden","Kaartlocaties beschermd tegen import (handmatige pinnen blijven bewaard)","Grijswaarden-kaart met gekleurde afdeling-bolletjes","Nette grafiek-tooltips (datum + ledenaantal) + 0-tellingen tijdens inactiviteit","Overdracht-herinnering wanneer het werkingsjaar bijna eindigt","JCI-Vlaanderen-AV: aanwezigheid melden met stemsterkte-telling en volmacht","Jaartallen op de x-as van de 'In de tijd'-grafiek"]},
   {v:"2.4",datum:"02/06/2026",items:["Rechten-audit: volledige app respecteert nu de rechtentabel i.p.v. rolnamen (schermguards, rij-scoping, knop-gating)","Navigatie verbergt schermen per recht voor álle rollen; admin-schermen op gebruikers/log/import","Bezoekplanning herwerkt: 'wie is aanwezig per lokale AV' met statuslabels","Aanwezig melden gekoppeld aan AV-schrijfrecht (canAttend)","Eigen profiel via initialen-bolletje: voornaam, familienaam, gsm, werkingsjaar gepind + wachtwoord","Ledengrafiek per afdeling hoger + alle namen leesbaar (y-as 'JCI afdelingen')","Grafieken in de tijd met rechte lijnen","Meertaligheid FR/EN: maanden + tientallen teksten vertaald (154 keys per taal)","Kalender: dag wordt weer ontkleurd bij deselecteren aanwezigheid","Nav-icoon 'AV JCI Vlaanderen' = users"]},
   {v:"2.3",datum:"30/05/2026",items:["Bugfix: 56+ dubbele functies verwijderd (betere prestaties)","Beveiliging: doRolChange/rLog/importData/stemsterkte beveiligd","Import/Export tab enkel zichtbaar voor admin","Toegangscontrole rLog versterkt"]},
   {v:"2.2",datum:"30/05/2026",items:["Bezoekplanning persoonlijk + kalender geel bij bezoekdag","Login JCI logo","Notities persoonlijk + kolom hernoemd","Testdata: Kortrijk lustrum 2027-28, Waregem, Tom Boonen","Stemsterkte in afdelingenlijst","Werkjaar onder afd naam in lijst","Leden toevoegen scroll-fix","Ledentellingknop 2 mannetjes","Bewerk afdeling tooltip","AV agenda+plus icoon","Laatste kolom verwijderd","Admin ledentelling beheren","Links overal naar afdelingen","Stemsterkte bewerkbaar in afd-info"]},
@@ -3414,6 +3415,17 @@ function initCharts(){
         });
       }
 
+      // Jaartal-ticks op de x-as: forceer een tick op 1 jan van elk jaar (om de 2 jaar bij veel jaren)
+      const _firstY=parseInt(sortedDates[0].slice(0,4));
+      const _lastY=parseInt(sortedDates[sortedDates.length-1].slice(0,4));
+      const _years=[];for(let _y=_firstY;_y<=_lastY;_y++)_years.push(_y);
+      const _yStep=_years.length>16?2:1;
+      let _tickYears=_years.filter((_,i)=>i%_yStep===0);
+      if(_tickYears[_tickYears.length-1]!==_lastY)_tickYears.push(_lastY);
+      const _yearTicks=_tickYears.map(_y=>new Date(_y+"-01-01").getTime());
+      const _xMin=new Date(_firstY+"-01-01").getTime();
+      const _xMax=Math.max(msVals[msVals.length-1],new Date(_lastY+"-01-01").getTime());
+
       chartInst=new Chart(ctx,{
         type:"scatter",
         data:{datasets},
@@ -3433,13 +3445,11 @@ function initCharts(){
           scales:{
             x:{
               type:"linear",
+              min:_xMin,max:_xMax,
+              afterBuildTicks:axis=>{axis.ticks=_yearTicks.map(v=>({value:v}));},
               ticks:{
-                color:"#8AB4CC",font:{size:10},maxRotation:30,
-                callback:val=>{
-                  // Show label only for actual data points
-                  const idx=msVals.findIndex(v=>Math.abs(v-val)<86400000*15);
-                  return idx>-1?labels[idx]:'';
-                }
+                color:"#8AB4CC",font:{size:10},maxRotation:0,autoSkip:false,
+                callback:val=>new Date(val).getFullYear()
               },
               grid:{color:"rgba(45,39,102,0.4)"}
             },
