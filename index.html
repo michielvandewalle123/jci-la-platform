@@ -311,7 +311,8 @@ const EXTRA_DIST={
 function provAfds(prov){ if(prov==="alle")return afdsWithInactive(); return (DIST[prov]||ALL).concat(EXTRA_DIST[prov]||[]); }
 const SUPER="michiel.vandewalle@jcivlaanderen.be";
 const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,gebruikers:0,log:0,import:0},localBestuur:{avEigen:1,avAnder:1,afdEigen:1,afdAnder:0,ledenEigen:1,ledenAnder:0,jciAvBeheer:0,jciAvEigen:1,jciAvAnder:0,kaart:1,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0},lid:{avEigen:1,avAnder:0,afdEigen:0,afdAnder:0,ledenEigen:0,ledenAnder:0,jciAvBeheer:0,jciAvEigen:0,jciAvAnder:0,kaart:0,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0}};
-const VERSION={num:"2.6",datum:"05/08/2026",changes:[
+const VERSION={num:"2.7",datum:"06/08/2026",changes:[
+  {v:"2.7",datum:"06/08/2026",items:["Afdeling (in)actief zetten kan enkel nog door de admin (niet door bestuur of afdelingsvoorzitter)","Notities hernoemd naar 'Persoonlijke notities'; de popup verduidelijkt dat ze enkel voor jou zichtbaar zijn","Persoonlijke notities kunnen nu ook bij andere afdelingen gemaakt worden","Aparte dev- en productiebuild (DEV_BUILD): de productieversie heeft geen enkele test-login","Admin: envelop-knop per gebruiker om de login + wachtwoord te mailen (opent de eigen mailclient met alles vooraf ingevuld)"]},
   {v:"2.6",datum:"05/08/2026",items:["Aanwezigheidsoverzicht (AV JCI Vlaanderen) sorteerbaar op elke kolom (A-Z / Z-A, klein/groot)","Eenvoudige wachtwoorden i.p.v. e-mail: overzicht + hergenereren/aanpassen in 'Gebruikers & rechten'; nieuwe gebruikers krijgen meteen een wachtwoord (geen mail/link)","Publieke 'Wachtwoord vergeten?' vervangen door reset via de beheerder","Rechten-hardening: schrijfacties (afdelingsinfo, lokaal bestuur, gebruikers- en bestuursbeheer) nu ook op functie-niveau afgeschermd, niet enkel via verborgen knoppen","Login herkent nu ook lokale leden met rol 'lid' (naast lokaal bestuurslid)"]},
   {v:"2.5",datum:"11/06/2026",items:["Test-/dev-omgeving: aparte dev-site met eigen database; Admin-snellogin verborgen op de test-site","LA info-tab: gedeelde info & links voor alle afdelingen","Agenda-sync: drie iCal-feeds in 'Mijn profiel' (eigen AV's, andere AV's, AV's waar ik aanwezig ben)","Ledenhistoriek 2004-2025 geïmporteerd; 16 verdwenen afdelingen toegevoegd als inactief","Filters Actief / Inactief / Alle op Afdelingen, Kaart en Leden","Kaartlocaties beschermd tegen import (handmatige pinnen blijven bewaard)","Grijswaarden-kaart met gekleurde afdeling-bolletjes","Nette grafiek-tooltips (datum + ledenaantal) + 0-tellingen tijdens inactiviteit","Overdracht-herinnering wanneer het werkingsjaar bijna eindigt","JCI-Vlaanderen-AV: aanwezigheid melden met stemsterkte-telling en volmacht","Jaartallen op de x-as van de 'In de tijd'-grafiek","In de tijd-grafiek: weergave 'Actief en inactief' — gestapeld met inactieve afdelingen in grijs","Grafiek-knoppenbalk overzichtelijker: groepen met labels en scheidingslijnen, Afdelingen-filter erbij; actieve knop licht nu correct geel op","Bugfix: provincie-filter in de tijd-grafiek neemt nu ook verdwenen afdelingen mee (split toonde voorheen geen inactief-band per provincie)"]},
   {v:"2.4",datum:"02/06/2026",items:["Rechten-audit: volledige app respecteert nu de rechtentabel i.p.v. rolnamen (schermguards, rij-scoping, knop-gating)","Navigatie verbergt schermen per recht voor álle rollen; admin-schermen op gebruikers/log/import","Bezoekplanning herwerkt: 'wie is aanwezig per lokale AV' met statuslabels","Aanwezig melden gekoppeld aan AV-schrijfrecht (canAttend)","Eigen profiel via initialen-bolletje: voornaam, familienaam, gsm, werkingsjaar gepind + wachtwoord","Ledengrafiek per afdeling hoger + alle namen leesbaar (y-as 'JCI afdelingen')","Grafieken in de tijd met rechte lijnen","Meertaligheid FR/EN: maanden + tientallen teksten vertaald (154 keys per taal)","Kalender: dag wordt weer ontkleurd bij deselecteren aanwezigheid","Nav-icoon 'AV JCI Vlaanderen' = users"]},
@@ -794,6 +795,18 @@ function userNaam(email){
   return (DB.profiles&&DB.profiles[email]&&DB.profiles[email].naam)||'';
 }
 function regenPw(email){if(!isAdmin())return;DB.pw[email]=genSimplePw(userNaam(email)||email.split('@')[0]);if(DB.pending)delete DB.pending[email];sdb();render();}
+function mailPw(email){
+  if(!isAdmin()||!email)return;
+  var naam=userNaam(email)||email;
+  var voornaam=(naam.split(/\s+/)[0])||naam;
+  var pw=DB.pw[email]||'';
+  var site=location.origin;
+  var subject='Inloggen op JCI LA-platform';
+  var body='Hallo '+voornaam+',\n\nJouw login werd aangemaakt op '+site+'.\nLogin: '+email+'\nWachtwoord: '+pw+'\n\nGroeten,\nMichiel Vandewalle,\nVicevoorzitter en Director Lokale Afdelingen 2026-2027\nJCI Vlaanderen';
+  var a=document.createElement('a');
+  a.href='mailto:'+email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  a.click();
+}
 function setPw(email,val){if(!isAdmin())return;val=(val||'').trim();if(!val){render();return;}DB.pw[email]=val;if(DB.pending)delete DB.pending[email];sdb();}
 function regenLocalPw(email){if(!email)return;var _afd=null,_lb=DB.localBestuur||{};for(var _a in _lb){if((_lb[_a]||[]).some(function(m){return m.email===email;})){_afd=_a;break;}}if(!isAdmin()&&!(_afd&&canEditAfd(_afd)))return;DB.pw[email]=genSimplePw(userNaam(email)||email.split('@')[0]);if(DB.pending)delete DB.pending[email];sdb();render();}
 
@@ -1555,7 +1568,7 @@ function rAfdDetail(){
 
       <!-- Bezoeken + notities -->
       <div class="card">
-        <div class="card-title" style="margin-bottom:8px;">${t('bezoekplan')} & ${t('notities')}</div>
+        <div class="card-title" style="margin-bottom:8px;">${t('bezoekplan')} & Persoonlijke notities</div>
         ${visits.length===0?`<div style="font-size:11px;color:#8AB4CC;margin-bottom:8px;">${t('geen_data')}</div>`:''}
         ${visits.map(v=>`<div class="av-item">
           <div><div style="font-size:11px;font-weight:600;color:#fff;">${fd(v.datum)}</div>
@@ -1563,9 +1576,9 @@ function rAfdDetail(){
           <span class="badge ${v.status==='bezocht'?'b-green':v.status==='afgelast'?'b-red':'b-blue'}" style="font-size:9px;">${t(v.status)}</span>
         </div>`).join('')}
         <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
-          <div style="font-size:10px;color:#8AB4CC;margin-bottom:4px;">${t('notities')} (${notes.length})</div>
+          <div style="font-size:10px;color:#8AB4CC;margin-bottom:4px;">Persoonlijke notities (${notes.length})</div>
           ${notes.slice(-3).reverse().map(n=>`<div style="font-size:11px;color:#C8DFF0;margin-bottom:4px;">${n.text.slice(0,80)}${n.text.length>80?'...':''}</div>`).join('')}
-          ${canEditAfdInfo(afd)?`<button class="btn btn-sm" style="margin-top:4px;font-size:10px;" onclick="openNotes('${afd}')">${ICO.note} Alle notities</button>`:''}
+          ${S.user?`<button class="btn btn-sm" style="margin-top:4px;font-size:10px;" onclick="openNotes('${afd}')">${ICO.note} Persoonlijke notities</button>`:''}
         </div>
       </div>
     </div>
@@ -2114,7 +2127,7 @@ function rAvLijst(){
 // H: ACTIEF/INACTIEF AFDELING
 // ═══════════════════════════════════════════
 function toggleAfdAktief(afd){
-  if(!canEditAfdInfo(afd))return;
+  if(!isAdmin())return;
   const currentlyAktief=DB.afdInfo[afd]?.aktief!==false;
   if(currentlyAktief){
     // Show confirmation modal before deactivating
@@ -2157,7 +2170,7 @@ function rInaktiefConfirmModal(){
   </div></div></div>`;}
 
 function confirmInaktief(afd){
-  if(!canEditAfdInfo(afd))return;
+  if(!isAdmin())return;
   const reden=document.getElementById('inaktief-reden')?.value||'';
   if(!DB.afdInfo[afd])DB.afdInfo[afd]={ledenHistory:[],kandidatenHistory:[]};
   DB.afdInfo[afd].aktief=false;
@@ -3103,7 +3116,7 @@ function rAfdTableRows(afds,distLabel){
   h+='<div class="tbl-wrap"><table class="dt"><thead><tr>';
   h+="<th>"+t("afdeling")+"</th><th>"+t("voorzitter")+"</th>";
   h+=(hasRecht("ledenAnder","ro")||hasRecht("ledenEigen","ro"))?"<th>"+t("leden_lbl")+"</th>":"";
-  h+=(hasRecht("avAnder","ro")?"<th>"+t("volgende_av")+"</th>":"")+"<th>Notities</th><th>Stemsterkte</th><th>Lustrum</th>";
+  h+=(hasRecht("avAnder","ro")?"<th>"+t("volgende_av")+"</th>":"")+"<th>Persoonlijke notities</th><th>Stemsterkte</th><th>Lustrum</th>";
   h+="<th>"+t("actief")+"</th><th></th>";
   h+="</tr></thead><tbody>";
   afds.forEach(function(a){
@@ -3128,11 +3141,11 @@ function rAfdTableRows(afds,distLabel){
     }else if(hasRecht("avAnder","ro")||hasRecht("avEigen","ro")){
     h+="<td>—</td>";
     }
-    h+="<td>"+(canEditAfdInfo(a)?"<button class=\"btn btn-sm\" data-afd=\""+a+"\" onclick=\"openNotes(this.dataset.afd)\">"+ICO.note+(nCount>0?" <span class='badge b-blue' style='font-size:9px;'>"+nCount+"</span>":"")+"</button>":"—")+"</td>";
+    h+="<td>"+(S.user?"<button class=\"btn btn-sm\" data-afd=\""+a+"\" onclick=\"openNotes(this.dataset.afd)\">"+ICO.note+(nCount>0?" <span class='badge b-blue' style='font-size:9px;'>"+nCount+"</span>":"")+"</button>":"—")+"</td>";
     h+="<td style=\"text-align:center;font-weight:700;color:#0097D7;font-size:13px;\">"+stem+"</td>";
     h+="<td>"+lust+"</td>";
     h+="<td><span class=\"badge "+(aktief?"b-gr":"b-rd")+"\">"+(aktief?t("actief"):"Inactief")+"</span></td>";
-    h+="<td>"+(canEditAfdInfo(a)?"<div style=\"display:flex;align-items:center;gap:5px;\"><div style=\"width:28px;height:15px;border-radius:8px;background:"+(aktief?"#1D9E75":"rgba(226,75,74,0.4)")+";position:relative;cursor:pointer;\" data-afd=\""+a+"\" onclick=\"toggleAfdAktief(this.dataset.afd)\"><div style=\"width:11px;height:11px;border-radius:50%;background:#fff;position:absolute;top:2px;left:"+(aktief?"15px":"2px")+"\"></div></div><span style=\"font-size:8px;color:"+(aktief?"#1D9E75":"#E24B4A")+";\">"+(aktief?t("actief"):"Inactief")+"</span></div>":"—")+"</td>";
+    h+="<td>"+(isAdmin()?"<div style=\"display:flex;align-items:center;gap:5px;\"><div style=\"width:28px;height:15px;border-radius:8px;background:"+(aktief?"#1D9E75":"rgba(226,75,74,0.4)")+";position:relative;cursor:pointer;\" data-afd=\""+a+"\" onclick=\"toggleAfdAktief(this.dataset.afd)\"><div style=\"width:11px;height:11px;border-radius:50%;background:#fff;position:absolute;top:2px;left:"+(aktief?"15px":"2px")+"\"></div></div><span style=\"font-size:8px;color:"+(aktief?"#1D9E75":"#E24B4A")+";\">"+(aktief?t("actief"):"Inactief")+"</span></div>":"—")+"</td>";
     var canEditAfd=hasRecht("afdAnder","rw")||(a===S.afd&&hasRecht("afdEigen","rw"));
     h+="<td style=\"display:flex;gap:3px;\">"+(canEditAfd?"<button class=\"btn btn-sm\" data-afd=\""+a+"\" onclick=\"openAfdInfo(this.dataset.afd)\" title=\"Bewerk afdeling\">"+ICO.settings+"</button>":"")+"</td>";
     h+="</tr>";
@@ -3853,14 +3866,14 @@ function rLaInfoModal(){
   </div></div>`;
 }
 
-function openNotes(afd){S.noteAfd=afd;S.modal='notes';render();}
+function openNotes(afd){if(!S.user)return;S.noteAfd=afd;S.modal='notes';render();}
 function openAfdInfo(afd){if(!(hasRecht("afdAnder","rw")||(afd===S.afd&&hasRecht("afdEigen","rw"))))return;S.noteAfd=afd;S.modal='afd-info';render();}
 
 function rNotesModal(){
   const afd=S.noteAfd;const all=DB.notes[afd]||[];const notes=myNotes(afd).slice().reverse();
   return`<div class="modal-bg" onclick="S.modal=null;render()"><div class="modal" onclick="event.stopPropagation()" style="width:500px;">
-    <div class="modal-title">${ICO.note} Notities — ${afd}</div>
-    <div style="font-size:10px;color:rgba(255,255,255,0.4);margin:-4px 0 10px;">Notities zijn persoonlijk en enkel zichtbaar voor jou.</div>
+    <div class="modal-title">${ICO.note} Persoonlijke notities — ${afd}</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.4);margin:-4px 0 10px;">Wat je hier schrijft is enkel voor jou zichtbaar. Andere gebruikers (ook bestuur of admin) zien deze notities niet.</div>
     <div class="form-row"><label class="form-label">Nieuwe notitie</label><textarea class="form-input" id="new-note" placeholder="Voeg een notitie toe…" rows="3"></textarea></div>
     <button class="btn btn-primary btn-sm" style="margin-bottom:14px;" onclick="addNote('${afd}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Toevoegen</button>
     <div style="max-height:280px;overflow-y:auto;">
@@ -4009,7 +4022,7 @@ function canEditAfd(afd){
   return hasRecht("afdAnder","rw")||(afd===S.afd&&hasRecht("afdEigen","rw"));
 }
 function addNote(afd){
-  if(!canEditAfdInfo(afd))return;
+  if(!S.user)return;
   const text=document.getElementById("new-note")?.value.trim();if(!text)return;
   if(!DB.notes[afd])DB.notes[afd]=[];
   const now=new Date();DB.notes[afd].push({text,by:S.user,ts:Date.now(),datum:now.toLocaleDateString("nl-BE"),tijd:now.toLocaleTimeString("nl-BE",{hour:"2-digit",minute:"2-digit"})});
@@ -4209,6 +4222,7 @@ function rUsr(){
           <td style="font-size:10px;color:#8AB4CC;white-space:nowrap;">${u.lastLogin||'<span style="color:rgba(255,255,255,0.25);">nooit</span>'}</td>
           <td style="display:flex;gap:3px;flex-wrap:wrap;">
             <button class="btn btn-sm" onclick="openEditUser('${u.email}')" title="Bewerken">${ICO.edit}</button>
+            ${isAdmin()?`<button class="btn btn-sm" onclick="mailPw('${u.email}')" title="Mail wachtwoord">${ICO.mail}</button>`:''}
             ${u.role==='vz'?`<button class="btn btn-sm" style="font-size:9px;color:#57BCBC;border-color:rgba(87,188,188,0.3);" onclick="S.overdrachtAfd='${u.afd}';S.modal='overdracht';render()" title="Overdracht voorzitter">⇄</button>`:''}
             ${u.email!==SUPER?`<button class="btn btn-sm btn-danger" onclick="rmUser('${u.email}','${u.afd}','${u.type}')">${ICO.trash}</button>`:''}
           </td>
