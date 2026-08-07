@@ -310,9 +310,10 @@ const EXTRA_DIST={
 // Afdelingen van een provincie inclusief verdwenen afdelingen (of alle 43 bij 'alle').
 function provAfds(prov){ if(prov==="alle")return afdsWithInactive(); return (DIST[prov]||ALL).concat(EXTRA_DIST[prov]||[]); }
 const SUPER="michiel.vandewalle@jcivlaanderen.be";
-const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,gebruikers:0,log:0,import:0},localBestuur:{avEigen:1,avAnder:1,afdEigen:1,afdAnder:0,ledenEigen:1,ledenAnder:0,jciAvBeheer:0,jciAvEigen:1,jciAvAnder:0,kaart:1,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0},lid:{avEigen:1,avAnder:0,afdEigen:0,afdAnder:0,ledenEigen:0,ledenAnder:0,jciAvBeheer:0,jciAvEigen:0,jciAvAnder:0,kaart:0,bezoek:0,laInfo:1,gebruikers:0,log:0,import:0}};
-const VERSION={num:"2.7",datum:"06/08/2026",changes:[
-  {v:"2.7",datum:"06/08/2026",items:["Afdeling (in)actief zetten kan enkel nog door de admin (niet door bestuur of afdelingsvoorzitter)","Notities hernoemd naar 'Persoonlijke notities'; de popup verduidelijkt dat ze enkel voor jou zichtbaar zijn","Persoonlijke notities kunnen nu ook bij andere afdelingen gemaakt worden","Aparte dev- en productiebuild (DEV_BUILD): de productieversie heeft geen enkele test-login","Admin: envelop-knop per gebruiker om de login + wachtwoord te mailen (opent de eigen mailclient met alles vooraf ingevuld)"]},
+const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,bestuurEigen:0,bestuurAnder:1,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,bestuurEigen:2,bestuurAnder:1,gebruikers:0,log:0,import:0}};
+const VERSION={num:"2.8",datum:"06/08/2026",changes:[
+  {v:"2.8",datum:"06/08/2026",items:["Gebruikersrollen 'lokaal bestuurslid' en 'lid' afgeschaft — enkel admin, bestuur JCI Vl. en afdelingsvoorzitter kunnen nog inloggen","Lokale bestuursleden zijn nu contactinfo (geen logins): voornaam, familienaam, functie(s) aanvinkbaar, e-mail, GSM, werkingsjaar","Afd-detail opgeschoond: 'Alle leden' verwijderd; ledenaantallen-tabel enkel voor admin of eigen voorzitter","Nieuwe rechten voor bestuursleden (eigen/andere afdeling, zien/bewerken); admin kan ze instellen","Admin-tab 'Lokale besturen': overzicht van alle voorzitters en bestuursleden","Overdracht voorzitter vereenvoudigd: admin past de voorzitter-gegevens aan en reset het wachtwoord","Admin kan geplande meldingen (popups) tonen na login, per rol en periode"]},
+  {v:"2.7",datum:"06/08/2026",items:["Afdeling (in)actief zetten kan enkel nog door de admin (niet door bestuur of afdelingsvoorzitter)","Notities hernoemd naar 'Persoonlijke notities'; de popup verduidelijkt dat ze enkel voor jou zichtbaar zijn","Persoonlijke notities kunnen nu ook bij andere afdelingen gemaakt worden","Aparte dev- en productiebuild (DEV_BUILD): de productieversie heeft geen enkele test-login","Admin: envelop-knop per gebruiker om de login + wachtwoord te mailen (opent de eigen mailclient met alles vooraf ingevuld)","Nieuwe login verschijnt nu in een nette popup (i.p.v. een browsermelding) met de waarschuwing dat je ze eenmalig ziet, plus een knop om ze te mailen — ook voor een lokale voorzitter die een bestuurslid toevoegt"]},
   {v:"2.6",datum:"05/08/2026",items:["Aanwezigheidsoverzicht (AV JCI Vlaanderen) sorteerbaar op elke kolom (A-Z / Z-A, klein/groot)","Eenvoudige wachtwoorden i.p.v. e-mail: overzicht + hergenereren/aanpassen in 'Gebruikers & rechten'; nieuwe gebruikers krijgen meteen een wachtwoord (geen mail/link)","Publieke 'Wachtwoord vergeten?' vervangen door reset via de beheerder","Rechten-hardening: schrijfacties (afdelingsinfo, lokaal bestuur, gebruikers- en bestuursbeheer) nu ook op functie-niveau afgeschermd, niet enkel via verborgen knoppen","Login herkent nu ook lokale leden met rol 'lid' (naast lokaal bestuurslid)"]},
   {v:"2.5",datum:"11/06/2026",items:["Test-/dev-omgeving: aparte dev-site met eigen database; Admin-snellogin verborgen op de test-site","LA info-tab: gedeelde info & links voor alle afdelingen","Agenda-sync: drie iCal-feeds in 'Mijn profiel' (eigen AV's, andere AV's, AV's waar ik aanwezig ben)","Ledenhistoriek 2004-2025 geïmporteerd; 16 verdwenen afdelingen toegevoegd als inactief","Filters Actief / Inactief / Alle op Afdelingen, Kaart en Leden","Kaartlocaties beschermd tegen import (handmatige pinnen blijven bewaard)","Grijswaarden-kaart met gekleurde afdeling-bolletjes","Nette grafiek-tooltips (datum + ledenaantal) + 0-tellingen tijdens inactiviteit","Overdracht-herinnering wanneer het werkingsjaar bijna eindigt","JCI-Vlaanderen-AV: aanwezigheid melden met stemsterkte-telling en volmacht","Jaartallen op de x-as van de 'In de tijd'-grafiek","In de tijd-grafiek: weergave 'Actief en inactief' — gestapeld met inactieve afdelingen in grijs","Grafiek-knoppenbalk overzichtelijker: groepen met labels en scheidingslijnen, Afdelingen-filter erbij; actieve knop licht nu correct geel op","Bugfix: provincie-filter in de tijd-grafiek neemt nu ook verdwenen afdelingen mee (split toonde voorheen geen inactief-band per provincie)"]},
   {v:"2.4",datum:"02/06/2026",items:["Rechten-audit: volledige app respecteert nu de rechtentabel i.p.v. rolnamen (schermguards, rij-scoping, knop-gating)","Navigatie verbergt schermen per recht voor álle rollen; admin-schermen op gebruikers/log/import","Bezoekplanning herwerkt: 'wie is aanwezig per lokale AV' met statuslabels","Aanwezig melden gekoppeld aan AV-schrijfrecht (canAttend)","Eigen profiel via initialen-bolletje: voornaam, familienaam, gsm, werkingsjaar gepind + wachtwoord","Ledengrafiek per afdeling hoger + alle namen leesbaar (y-as 'JCI afdelingen')","Grafieken in de tijd met rechte lijnen","Meertaligheid FR/EN: maanden + tientallen teksten vertaald (154 keys per taal)","Kalender: dag wordt weer ontkleurd bij deselecteren aanwezigheid","Nav-icoon 'AV JCI Vlaanderen' = users"]},
@@ -717,7 +718,7 @@ function rLogin(){return`<div class="login-wrap" style="position:relative;overfl
   <div class="form-row"><label class="form-label">Wachtwoord</label><input class="form-input" id="lp" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/></div>
   <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="login()">Inloggen</button>
   <div style="text-align:center;font-size:10px;color:var(--text2);margin-top:8px;">Wachtwoord vergeten? Neem contact op met je beheerder.</div>
-  ${DEV_BUILD&&new URLSearchParams(window.location.search).get('dev')==='1'?'<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(239,196,15,0.2);"><div style="font-size:9px;color:rgba(239,196,15,0.5);text-align:center;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">&#9889; Testmodus — snel inloggen</div><div style="display:flex;flex-direction:column;gap:6px;">'+(isDevSite()?'<button class="btn" style="font-size:11px;background:rgba(16,84,160,0.25);border-color:rgba(16,84,160,0.5);color:#33B3E8;text-align:left;padding:7px 12px;" onclick="quickLogin(\'admin\')"><span style=\"font-weight:600;\">Admin</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Alle rechten</span></button>':'')+'<button class="btn" style="font-size:11px;background:rgba(0,151,215,0.15);border-color:rgba(0,151,215,0.35);color:#0097D7;text-align:left;padding:7px 12px;" onclick="quickLogin(\'bestuur\')"><span style=\"font-weight:600;\">Bestuur JCI Vl.</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees+schrijf</span></button><button class="btn" style="font-size:11px;background:rgba(87,188,188,0.15);border-color:rgba(87,188,188,0.35);color:#57BCBC;text-align:left;padding:7px 12px;" onclick="quickLogin(\'vz\')"><span style=\"font-weight:600;\">Afdelingsvoorzitter</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Eigen afd</span></button><button class="btn" style="font-size:11px;background:rgba(239,196,15,0.1);border-color:rgba(239,196,15,0.25);color:#EFC40F;text-align:left;padding:7px 12px;" onclick="quickLogin(\'localBestuur\')"><span style=\"font-weight:600;\">Lokaal bestuurslid</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees-only</span></button><button class="btn" style="font-size:11px;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);text-align:left;padding:7px 12px;" onclick="quickLogin(\'lid\')"><span style=\"font-weight:600;\">Lid</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Beperkt</span></button></div></div>':''}
+  ${DEV_BUILD&&new URLSearchParams(window.location.search).get('dev')==='1'?'<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(239,196,15,0.2);"><div style="font-size:9px;color:rgba(239,196,15,0.5);text-align:center;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">&#9889; Testmodus — snel inloggen</div><div style="display:flex;flex-direction:column;gap:6px;">'+(isDevSite()?'<button class="btn" style="font-size:11px;background:rgba(16,84,160,0.25);border-color:rgba(16,84,160,0.5);color:#33B3E8;text-align:left;padding:7px 12px;" onclick="quickLogin(\'admin\')"><span style=\"font-weight:600;\">Admin</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Alle rechten</span></button>':'')+'<button class="btn" style="font-size:11px;background:rgba(0,151,215,0.15);border-color:rgba(0,151,215,0.35);color:#0097D7;text-align:left;padding:7px 12px;" onclick="quickLogin(\'bestuur\')"><span style=\"font-weight:600;\">Bestuur JCI Vl.</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Lees+schrijf</span></button><button class="btn" style="font-size:11px;background:rgba(87,188,188,0.15);border-color:rgba(87,188,188,0.35);color:#57BCBC;text-align:left;padding:7px 12px;" onclick="quickLogin(\'vz\')"><span style=\"font-weight:600;\">Afdelingsvoorzitter</span><span style=\"float:right;opacity:0.6;font-size:10px;\">Eigen afd</span></button></div></div>':''}
 </div></div>`;
 }
 
@@ -748,8 +749,6 @@ function quickLogin(role){
     admin:{user:'michiel.vandewalle@jcivlaanderen.be',afd:null,view:'db'},
     bestuur:{user:'melanie.vandewaetere@jcivlaanderen.be',afd:null,view:'db'},
     vz:{user:'sarahnolf89@gmail.com',afd:'JCI Waregem',view:'vz'},
-    localBestuur:{user:'charlotte.degeest@jcikortrijk.be',afd:'JCI Kortrijk',view:'vz'},
-    lid:{user:'laura.molhoek@hotmail.com',afd:'JCI Aalst',view:'vz'}
   };
   var cfg=roleMap[role];
   if(!cfg)return;
@@ -758,7 +757,7 @@ function quickLogin(role){
   S.afd=cfg.afd;
   S.view=cfg.view;
   S.modal=null;
-  render();
+  queuePopups();render();
 }
 function quickLoginAdmin(){quickLogin('admin');}
 
@@ -773,13 +772,10 @@ function login(){
   const e=document.getElementById("le")?.value.trim().toLowerCase();
   const p=document.getElementById("lp")?.value;
   S.loginEmail=e;S.loginErr="";S.loginMsg="";
-  if((e==="admin@jci.be"&&p==="admin123")||(DB.admins.includes(e)&&DB.pw[e]===p)){S.user=e;S.role="admin";S.view="db";recordLogin(e);render();return;}
-  if(DB.bestuur&&DB.bestuur.includes(e)&&DB.pw[e]===p){S.user=e;S.role="bestuur";S.view="db";recordLogin(e);render();return;}
-  // Check localBestuur
-  const lb=Object.entries(DB.localBestuur||{}).find(([,members])=>Array.isArray(members)&&members.find(m=>m.email&&m.email.toLowerCase()===e)&&DB.pw[e]===p);
-  if(lb){if(DB.pending[e]){S.setupToken=e;S.view="setup";render();return;}var _lbrol=(lb[1].find(function(x){return x.email&&x.email.toLowerCase()===e;})||{}).rol==='lid'?'lid':'localBestuur';S.user=e;S.role=_lbrol;S.afd=lb[0];S.view="vz";recordLogin(e);render();return;}
+  if((e==="admin@jci.be"&&p==="admin123")||(DB.admins.includes(e)&&DB.pw[e]===p)){S.user=e;S.role="admin";S.view="db";recordLogin(e);queuePopups();render();return;}
+  if(DB.bestuur&&DB.bestuur.includes(e)&&DB.pw[e]===p){S.user=e;S.role="bestuur";S.view="db";recordLogin(e);queuePopups();render();return;}
   const m=Object.entries(DB.vz).find(([,v])=>v.email&&v.email.toLowerCase()===e&&DB.pw[e]===p);
-  if(m){if(DB.pending[e]){S.setupToken=e;S.view="setup";render();return;}S.user=e;S.role="vz";S.afd=m[0];S.view="vz";recordLogin(e);render();return;}
+  if(m){if(DB.pending[e]){S.setupToken=e;S.view="setup";render();return;}S.user=e;S.role="vz";S.afd=m[0];S.view="vz";recordLogin(e);queuePopups();render();return;}
   S.loginErr="Ongeldig e-mailadres of wachtwoord.";render();
 }
 function genSimplePw(base){
@@ -791,7 +787,7 @@ function genSimplePw(base){
 function userNaam(email){
   for(var afd in DB.vz){if(DB.vz[afd]&&DB.vz[afd].email===email)return DB.vz[afd].naam||'';}
   var lb=DB.localBestuur||{};
-  for(var a in lb){var m=(lb[a]||[]).find(function(x){return x.email===email;});if(m&&m.naam)return m.naam;}
+  for(var a in lb){var m=(lb[a]||[]).find(function(x){return x.email===email;});if(m)return memberNaam(m);}
   return (DB.profiles&&DB.profiles[email]&&DB.profiles[email].naam)||'';
 }
 function regenPw(email){if(!isAdmin())return;DB.pw[email]=genSimplePw(userNaam(email)||email.split('@')[0]);if(DB.pending)delete DB.pending[email];sdb();render();}
@@ -806,6 +802,34 @@ function mailPw(email){
   var a=document.createElement('a');
   a.href='mailto:'+email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   a.click();
+}
+function showNewCred(naam,email,pw,afd,back){S.newCred={naam:naam,email:email,pw:pw,afd:afd,back:back||null};S.modal='new-cred';render();}
+function closeNewCred(){var b=S.newCred&&S.newCred.back;S.newCred=null;S.modal=b||null;render();}
+function mailNewCred(){
+  var c=S.newCred; if(!c)return;
+  var voornaam=(String(c.naam||c.email).split(/\s+/)[0])||c.email;
+  var site=location.origin;
+  var subject='Inloggen op JCI LA-platform';
+  var body='Hallo '+voornaam+',\n\nJouw login werd aangemaakt op '+site+'.\nLogin: '+c.email+'\nWachtwoord: '+c.pw+'\n\nGroeten,\nMichiel Vandewalle,\nVicevoorzitter en Director Lokale Afdelingen 2026-2027\nJCI Vlaanderen';
+  var a=document.createElement('a');
+  a.href='mailto:'+c.email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  a.click();
+}
+function rNewCredModal(){
+  var c=S.newCred||{};
+  return`<div class="modal-bg" onclick="closeNewCred()"><div class="modal" onclick="event.stopPropagation()" style="max-width:420px;">
+    <div class="modal-title">${ICO.note} Login aangemaakt</div>
+    <div class="alert alert-blue" style="margin-bottom:12px;line-height:1.6;">Je krijgt deze login <b>éénmaal</b> te zien. Noteer deze login of mail ze naar het bestuurslid.</div>
+    <div style="background:rgba(255,255,255,0.03);border:0.5px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:12px;">
+      ${c.naam?`<div style="font-weight:600;color:#fff;font-size:13px;margin-bottom:8px;">${c.naam}</div>`:''}
+      <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:6px;"><span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;">Login</span><span style="font-family:Consolas,monospace;font-size:12px;color:#C8DFF0;">${c.email||''}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:10px;"><span style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;">Wachtwoord</span><span style="font-family:Consolas,monospace;font-size:12px;font-weight:700;color:#EFC40F;">${c.pw||''}</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="mailNewCred()" title="Mail login">${ICO.mail} Mail login</button>
+      <button class="btn btn-primary" onclick="closeNewCred()">OK</button>
+    </div>
+  </div></div>`;
 }
 function setPw(email,val){if(!isAdmin())return;val=(val||'').trim();if(!val){render();return;}DB.pw[email]=val;if(DB.pending)delete DB.pending[email];sdb();}
 function regenLocalPw(email){if(!email)return;var _afd=null,_lb=DB.localBestuur||{};for(var _a in _lb){if((_lb[_a]||[]).some(function(m){return m.email===email;})){_afd=_a;break;}}if(!isAdmin()&&!(_afd&&canEditAfd(_afd)))return;DB.pw[email]=genSimplePw(userNaam(email)||email.split('@')[0]);if(DB.pending)delete DB.pending[email];sdb();render();}
@@ -883,7 +907,7 @@ function rVZ(){
           <option value="academie" ${vz.werkjaar==="academie"?"selected":""}>${t('academie')}</option>
         </select></div>
         ${S.role==='vz'?`<button class="btn btn-primary btn-sm" onclick="saveVZProfiel()">${t('opslaan')}</button>`:''}
-        ${S.role==='vz'?`<button class="btn btn-sm" style="margin-top:6px;width:100%;" onclick="S.modal='local-bestuur';render()">${ICO.usrplus} Lokaal bestuur beheren</button>`:''}
+        ${S.role==='vz'?`<button class="btn btn-sm" style="margin-top:6px;width:100%;" onclick="S.beheerAfd=null;S.modal='local-bestuur';render()">${ICO.usrplus} Lokaal bestuur beheren</button>`:''}
       </div>
       <div class="vz-card">
         <div class="card-title">${t('leden_lbl')} & ${t('kandidaten')}</div>
@@ -915,7 +939,7 @@ function rVZ(){
           <button class="btn btn-sm btn-danger" onclick="delAV('${av.id}')">${ICO.trash}</button>
         </div></div>`).join("")}
     </div>
-    ${S.modal==='local-bestuur'?rLocalBestuurModal():""}
+    ${S.modal==='local-bestuur'?rLocalBestuurModal():""}${S.modal==='new-cred'?rNewCredModal():""}${S.modal==='popup'?rPopupModal():""}
   </div>`}
   </div>`;}
 
@@ -1046,11 +1070,11 @@ function rAdmin(){
   ${S.modal==='inaktief-confirm'?rInaktiefConfirmModal():""}
   
   ${S.modal==='rol-popup'?rRolPopup():""}
-  ${S.modal==='overdracht'?rOverdrachtModal():""}
+  
   ${S.modal==='stemsterkte'?rStemsterkteModal():""}
   ${S.modal==='jci-av-form'?rJciAvFormModal():""}
   ${S.modal==='jci-volmacht'?rJciVolmachtModal():""}
-  ${S.modal==='versie'?rVersieModal():""}`;}
+  ${S.modal==='versie'?rVersieModal():""}${S.modal==='new-cred'?rNewCredModal():""}${S.modal==='popup'?rPopupModal():""}`;}
 
 function switchView(v){
   if(leafletAfdMap&&v!=="afd-map"&&v!=="vz-map"){leafletAfdMap.remove();leafletAfdMap=null;}
@@ -1497,7 +1521,7 @@ function rAfdDetail(){
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <div class="card-title" style="margin:0;">${t('lokaal_bestuur')}</div>
-          ${canEditAfdInfo(afd)?`<button class="btn btn-sm" style="color:#57BCBC;border-color:rgba(87,188,188,0.3);" onclick="S.overdrachtAfd='${afd}';S.modal='overdracht';render()" title="Overdracht voorzitter">⇄ Overdracht</button>`:''}
+          ${canEditAfdInfo(afd)?``:''}
         </div>
         <div style="font-size:9px;color:rgba(239,196,15,0.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">${t('voorzitter')}</div>
         <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12px;margin-bottom:10px;">
@@ -1507,12 +1531,12 @@ function rAfdDetail(){
           <span style="color:#8AB4CC;">${t('werkjaar')}</span><span><span class="badge ${vz.werkjaar==='academie'?'b-purple':'b-blue'}">${werkjaarLabel(vz.werkjaar||'kalender')}</span></span>
         </div>
         ${(()=>{
-          const lb=((DB.localBestuur||{})[afd]||[]).filter(m=>m.naam||m.email);
+          const lb=((DB.localBestuur||{})[afd]||[]).filter(m=>memberNaam(m)||m.email);
           if(!lb.length)return `<div style="font-size:9px;color:rgba(239,196,15,0.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;border-top:0.5px solid var(--border);padding-top:8px;">Lokale bestuursleden</div><div style="font-size:11px;color:var(--text2);">Nog geen lokale bestuursleden.</div>`;
-          return `<div style="font-size:9px;color:rgba(239,196,15,0.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;border-top:0.5px solid var(--border);padding-top:8px;">Lokale bestuursleden (${lb.length})</div>`+
+          return `<div style="display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:8px;margin-bottom:6px;"><span style="font-size:9px;color:rgba(239,196,15,0.6);text-transform:uppercase;letter-spacing:.5px;">Lokale bestuursleden (${lb.length})</span>${canEditBestuur(afd)?`<button class="btn btn-sm" style="font-size:9px;padding:2px 8px;" onclick="S.beheerAfd='${afd}';S.modal='local-bestuur';render()">${ICO.usrplus} Beheren</button>`:''}</div>`+
             lb.map(m=>`<div class="av-item" style="padding:4px 0;">
               <div style="flex:1;">
-                <div style="font-size:11px;color:#fff;font-weight:600;">${m.naam||'—'}${m.functie?` <span style="font-size:9px;color:#8AB4CC;font-weight:400;">${m.functie}</span>`:''}</div>
+                <div style="font-size:11px;color:#fff;font-weight:600;">${memberNaam(m)||'—'} ${memberFuncties(m).map(f=>`<span class="badge b-blue" style="font-size:8px;">${f}</span>`).join(' ')}</div>
                 <div style="font-size:9px;color:rgba(239,196,15,0.55);">${m.email?`<a href="mailto:${m.email}" style="color:#0097D7;text-decoration:none;">${m.email}</a>`:''}${m.gsm?` · <a href="tel:${m.gsm}" style="color:#57BCBC;">${m.gsm}</a>`:''}</div>
               </div>
             </div>`).join('');
@@ -1583,60 +1607,10 @@ function rAfdDetail(){
       </div>
     </div>
 
-    <!-- G3: Leden afdeling card -->
-    ${(()=>{
-      const wjType=(DB.werkjaarConfig&&DB.werkjaarConfig[afd]?.type)||vz.werkjaar||'kalender';
-      const wjLabel=werkjaarLabel(wjType);
-      const dispWj=S.afdWerkjaar||wjLabel;
-      const afdLedenRaw=((DB.afdLeden||{})[afd]||{})[dispWj]||[];
-      // Merge with localBestuur (avoid email duplicates)
-      const lbRaw=(DB.localBestuur||{})[afd]||[];
-      const afdLedenData=[...afdLedenRaw];
-      lbRaw.forEach(m=>{
-        const wjMatch=!m.werkjaar||m.werkjaar===dispWj;
-        if(wjMatch&&!afdLedenData.find(l=>l.email&&l.email===m.email)){
-          afdLedenData.push({...m,rol:m.rol||'localBestuur'});
-        }
-      });
-      // Voorzitter ook tonen in 'Alle leden afdeling' (indien nog niet aanwezig)
-      if(vz&&(vz.naam||vz.email)&&!afdLedenData.find(l=>l.email&&vz.email&&l.email===vz.email)){
-        afdLedenData.unshift({naam:vz.naam,email:vz.email,gsm:vz.gsm,functie:'Voorzitter',rol:'vz'});
-      }
-      const canManage=canEditAfd(afd);
-      return`<div class="card" style="margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div class="card-title" style="margin:0;">${t('alle_leden_afd')} (${afdLedenData.length})</div>
-            ${rWerkjaarDropdown(afd,wjLabel)}
-          </div>
-          ${canManage&&!(S.afdWerkjaar&&S.afdWerkjaar!==wjLabel)?`<button class="btn btn-primary btn-sm" onclick="openAfdLedenModal('${afd}')" title="Bestuurslid of lid toevoegen">${ICO.usrplus} ${t('voeg_toe')}</button>`:''}
-        </div>
-        ${afdLedenData.length===0
-          ?`<div style="color:var(--text2);font-size:11px;">${t('geen_data')}</div>`
-          :afdLedenData.map(lid=>{
-            const initials=(lid.naam||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-            const rolBadge=lid.rol==='vz'?'b-blue':lid.rol==='bestuurslid'||lid.rol==='localBestuur'?'b-teal':'b-gray';
-            const rolLabel=lid.rol==='vz'?t('voorzitter'):lid.rol==='bestuurslid'||lid.rol==='localBestuur'?'Bestuurslid':'Lid';
-            return`<div class="av-item" style="align-items:flex-start;padding:6px 0;">
-              <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,151,215,0.18);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0097D7;flex-shrink:0;margin-top:2px;">${initials}</div>
-              <div style="flex:1;">
-                <div style="font-size:11px;color:#fff;font-weight:600;">${lid.naam||'—'}</div>
-                ${lid.functie?`<div style="font-size:9px;color:#8AB4CC;">${lid.functie}</div>`:''}
-                <div style="font-size:9px;color:rgba(239,196,15,0.55);margin-top:1px;">
-                  ${lid.email?`<a href="mailto:${lid.email}" style="color:#0097D7;text-decoration:none;">${lid.email}</a>`:''}
-                  ${lid.email&&lid.gsm?' · ':''}
-                  ${lid.gsm?`<a href="tel:${lid.gsm}" style="color:#57BCBC;">${lid.gsm}</a>`:''}
-                </div>
-              </div>
-              <span class="badge ${rolBadge}" style="font-size:8px;margin-top:2px;">${rolLabel}</span>
-            </div>`;
-          }).join('')
-        }
-      </div>`;
-    })()}
+
 
     <!-- Leden historiek tabel -->
-    ${hist.length>0?`<div class="card">
+    ${(isAdmin()||(S.afd&&afd===S.afd))&&hist.length>0?`<div class="card">
       <div class="card-title" style="margin-bottom:8px;">Ledenstelling historiek</div>
       <div class="tbl-wrap"><table class="dt"><thead><tr>
         <th>${t('datum')}</th>${(hasRecht('ledenAnder','ro')||hasRecht('ledenEigen','ro'))?`<th>${t('leden_lbl')}</th><th>${t('kandidaten')}</th>`:''}<th>Door</th>
@@ -1775,96 +1749,102 @@ function rVzLeden(){
 // ═══════════════════════════════════════════
 // LOKAAL BESTUUR (beheerd door afdelingsvoorzitter)
 // ═══════════════════════════════════════════
-function rLocalBestuurModal(){
-  const afd=S.afd;
-  const members=(DB.localBestuur[afd]||[]);
-  return`<div class="modal-bg" onclick="S.modal=null;render()"><div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
-    <div class="modal-title">${ICO.usrplus} Lokaal bestuur — ${afd}</div>
-    <div class="alert alert-blue" style="margin-bottom:10px;font-size:11px;">Leden van je lokaal bestuur kunnen inloggen en dezelfde informatie zien als jij. Je kan hen een functie, e-mail en GSM toewijzen.</div>
-
-    <!-- Add new member -->
-    <div style="background:#231E52;border-radius:8px;padding:12px;margin-bottom:12px;">
-      <div class="card-title" style="margin-bottom:8px;">Nieuw lid toevoegen</div>
-      <div class="form-grid2">
-        <div class="form-row"><label class="form-label">Naam</label><input class="form-input" id="lb-naam" type="text" placeholder="Voornaam Achternaam"/></div>
-        <div class="form-row"><label class="form-label">Functie</label><input class="form-input" id="lb-functie" type="text" placeholder="bv. Secretaris, Penningmeester"/></div>
-      </div>
-      <div class="form-grid2">
-        <div class="form-row"><label class="form-label">E-mail</label><input class="form-input" id="lb-email" type="email" placeholder="naam@email.be"/></div>
-        <div class="form-row"><label class="form-label">GSM</label><input class="form-input" id="lb-gsm" type="tel" placeholder="+32 4xx xx xx xx"/></div>
-      </div>
-      <div class="form-grid2">
-        <div class="form-row"><label class="form-label">${t('werkjaar')}</label><input class="form-input" id="lb-wj" type="text" value="${werkjaarLabel((DB.werkjaarConfig&&DB.werkjaarConfig[afd]?.type)||DB.vz[afd]?.werkjaar||'kalender')}" placeholder="bv. 2025-2026 of 2026"/></div>
-        <div class="form-row"><label class="form-label">Gebruikersrol</label><select class="form-input" id="lb-rol">
-          <option value="localBestuur">Lokaal bestuurslid</option>
-          <option value="lid">Lokaal lid</option>
-        </select></div>
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="addLocalBestuur('${afd}')">${ICO.plus} Toevoegen</button>
-    </div>
-
-    <!-- Existing members -->
-    ${members.length===0?`<div style="color:#8AB4CC;font-size:12px;">Nog geen leden toegevoegd.</div>`:''}
-    ${members.map((m,i)=>`<div class="av-item">
-      <div style="flex:1;">
-        <div style="font-weight:600;font-size:12px;color:#fff;">${m.naam||'—'} ${m.functie?`<span class="badge b-blue" style="font-size:9px;">${m.functie}</span>`:''}</div>
-        <div style="font-size:10px;color:#8AB4CC;">${m.email||'—'} ${m.gsm?'· '+m.gsm:''}</div>
-        <div style="font-size:9px;color:rgba(239,196,15,0.55);">${m.werkjaar?m.werkjaar+' · ':''}${m.email?'Wachtwoord: '+(DB.pw[m.email]||'—'):'Actief'}</div>
-      </div>
-      <div style="display:flex;gap:4px;">
-        ${m.email?`<button class="btn btn-sm" title="Nieuw eenvoudig wachtwoord" onclick="regenLocalPw('${m.email}')">&#8635;</button>`:''}
-        <button class="btn btn-sm btn-danger" onclick="rmLocalBestuur('${afd}',${i})">${ICO.trash}</button>
-      </div>
-    </div>`).join('')}
-    <div class="modal-footer"><button class="btn" onclick="S.modal=null;render()">${t('sluiten')}</button></div>
-  </div></div>`;}
-
-function addLocalBestuur(afd){
-  if(!canEditAfd(afd))return;
-  const naam=document.getElementById('lb-naam')?.value.trim();
-  const functie=document.getElementById('lb-functie')?.value.trim();
-  const email=document.getElementById('lb-email')?.value.trim().toLowerCase();
-  const gsm=document.getElementById('lb-gsm')?.value.trim();
-  const wj=document.getElementById('lb-wj')?.value.trim()||werkjaarLabel((DB.werkjaarConfig&&DB.werkjaarConfig[afd]?.type)||DB.vz[afd]?.werkjaar||'kalender');
-  const rol=document.getElementById('lb-rol')?.value||'localBestuur';
-  if(!email){alert('E-mailadres is verplicht.');return;}
-  if(!DB.localBestuur[afd])DB.localBestuur[afd]=[];
-  // Also save in afdLeden per werkjaar for G3 display
-  if(!DB.afdLeden)DB.afdLeden={};
-  if(!DB.afdLeden[afd])DB.afdLeden[afd]={};
-  if(!DB.afdLeden[afd][wj])DB.afdLeden[afd][wj]=[];
-  if(!DB.afdLeden[afd][wj].find(l=>l.email===email)){
-    DB.afdLeden[afd][wj].push({naam,functie,email,gsm,rol,werkjaar:wj,ts:tsNow()});
-  }
-  const pw=genSimplePw(naam||email.split('@')[0]);
-  DB.localBestuur[afd].push({naam,functie,email,gsm,werkjaar:wj,rol,ts:tsNow()});
-  DB.pw[email]=pw;
-  sdb();
-  S.modal='local-bestuur';render();
-  if(email)alert("Lokaal bestuurslid toegevoegd.\n\nLogin: "+email+"\nWachtwoord: "+pw);
+// ── Lokale bestuursleden (INFO — geen logins) ─────────────────
+const FUNCTIE_LIST=['Voorzitter','IPP','Vicevoorzitter','Secretaris','Penningmeester','Ledenverantwoordelijke','Communicatieverantwoordelijke','Vormingsverantwoordelijke','Internationalisme','Commissies','Business & Networking'];
+const WERKJAAR_OPTIONS=['2025','2026','2027','2028','2025-2026','2026-2027','2027-2028'];
+function memberNaam(m){ if(!m)return''; if(m.voornaam||m.familienaam)return((m.voornaam||'')+' '+(m.familienaam||'')).trim(); return m.naam||''; }
+function memberFuncties(m){ if(!m)return[]; if(Array.isArray(m.functies))return m.functies; return m.functie?[m.functie]:[]; }
+function afdCustomFuncties(afd){ return (DB.customFuncties&&DB.customFuncties[afd])||[]; }
+function canViewBestuur(afd){ if(isAdmin())return true; return afd===S.afd?hasRecht('bestuurEigen','ro'):hasRecht('bestuurAnder','ro'); }
+function canEditBestuur(afd){ if(isAdmin())return true; return afd===S.afd?hasRecht('bestuurEigen','rw'):hasRecht('bestuurAnder','rw'); }
+function beheerAfd(){ return S.beheerAfd||S.afd; }
+function readLbForm(){
+  return {
+    voornaam:(document.getElementById('lb-vn')||{}).value||'',
+    familienaam:(document.getElementById('lb-fn')||{}).value||'',
+    email:(document.getElementById('lb-email')||{}).value||'',
+    gsm:(document.getElementById('lb-gsm')||{}).value||'',
+    werkjaar:(document.getElementById('lb-wj')||{}).value||'',
+    functies:[].slice.call(document.querySelectorAll('.lb-fcb:checked')).map(function(c){return c.value;})
+  };
 }
+function addCustomFunctie(afd){
+  var el=document.getElementById('lb-customf'); var v=el?(''+el.value).trim():'';
+  if(!v)return;
+  if(!DB.customFuncties)DB.customFuncties={};
+  if(!DB.customFuncties[afd])DB.customFuncties[afd]=[];
+  if(FUNCTIE_LIST.indexOf(v)===-1 && DB.customFuncties[afd].indexOf(v)===-1)DB.customFuncties[afd].push(v);
+  S.lbDraft=readLbForm(); if(S.lbDraft.functies.indexOf(v)===-1)S.lbDraft.functies.push(v);
+  sdb();render();
+}
+function closeLbModal(){S.lbDraft=null;S.beheerAfd=null;S.modal=null;render();}
+function rLocalBestuurModal(){
+  const afd=beheerAfd();
+  const members=(DB.localBestuur[afd]||[]);
+  const kanBewerken=canEditBestuur(afd);
+  const d=S.lbDraft||{};
+  const opties=FUNCTIE_LIST.concat(afdCustomFuncties(afd));
+  const wjDefault=d.werkjaar||werkjaarLabel((DB.werkjaarConfig&&DB.werkjaarConfig[afd]?.type)||DB.vz[afd]?.werkjaar||'kalender');
+  return`<div class="modal-bg" onclick="closeLbModal()"><div class="modal" onclick="event.stopPropagation()" style="max-width:560px;">
+    <div class="modal-title">${ICO.usrplus} Lokaal bestuur — ${afd}</div>
+    <div class="alert alert-blue" style="margin-bottom:10px;font-size:11px;">Bestuursleden zijn <b>contactinfo</b> voor andere afdelingen — geen logins. Zo kan bv. de penningmeester van een andere afdeling snel gecontacteerd worden.</div>
+    ${kanBewerken?`<div style="background:#231E52;border-radius:8px;padding:12px;margin-bottom:12px;">
+      <div class="card-title" style="margin-bottom:8px;">Nieuw bestuurslid toevoegen</div>
+      <div class="form-grid2">
+        <div class="form-row"><label class="form-label">Voornaam</label><input class="form-input" id="lb-vn" type="text" value="${(d.voornaam||'').replace(/"/g,'&quot;')}" placeholder="Voornaam"/></div>
+        <div class="form-row"><label class="form-label">Familienaam</label><input class="form-input" id="lb-fn" type="text" value="${(d.familienaam||'').replace(/"/g,'&quot;')}" placeholder="Familienaam"/></div>
+      </div>
+      <div class="form-row"><label class="form-label">Functie(s)</label>
+        <div style="display:flex;flex-wrap:wrap;gap:7px 14px;background:rgba(0,0,0,0.15);border-radius:6px;padding:9px 11px;">
+          ${opties.map(function(f){var chk=(d.functies||[]).indexOf(f)>-1?'checked':'';return '<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:#C8DFF0;cursor:pointer;"><input type="checkbox" class="lb-fcb" value="'+f.replace(/"/g,'&quot;')+'" '+chk+'/> '+f+'</label>';}).join('')}
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <input class="form-input" id="lb-customf" type="text" placeholder="Andere functie toevoegen…" style="flex:1;font-size:11px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomFunctie('${afd}')}"/>
+          <button class="btn btn-sm" onclick="addCustomFunctie('${afd}')">${ICO.plus} Functie</button>
+        </div>
+      </div>
+      <div class="form-grid2">
+        <div class="form-row"><label class="form-label">E-mail</label><input class="form-input" id="lb-email" type="email" value="${(d.email||'').replace(/"/g,'&quot;')}" placeholder="naam@email.be"/></div>
+        <div class="form-row"><label class="form-label">GSM</label><input class="form-input" id="lb-gsm" type="tel" value="${(d.gsm||'').replace(/"/g,'&quot;')}" placeholder="+32 4xx xx xx xx"/></div>
+      </div>
+      <div class="form-row"><label class="form-label">${t('werkjaar')}</label><select class="form-input" id="lb-wj">
+        ${WERKJAAR_OPTIONS.indexOf(wjDefault)===-1?'<option value="'+wjDefault+'" selected>'+wjDefault+'</option>':''}
+        ${WERKJAAR_OPTIONS.map(function(w){return '<option value="'+w+'" '+(w===wjDefault?'selected':'')+'>'+w+'</option>';}).join('')}
+      </select></div>
+      <button class="btn btn-primary btn-sm" onclick="addLocalBestuur('${afd}')">${ICO.plus} Toevoegen</button>
+    </div>`:''}
 
+    ${members.length===0?`<div style="color:#8AB4CC;font-size:12px;">Nog geen bestuursleden toegevoegd.</div>`:''}
+    ${members.map(function(m,i){return '<div class="av-item"><div style="flex:1;">'+
+      '<div style="font-weight:600;font-size:12px;color:#fff;">'+(memberNaam(m)||'—')+' '+memberFuncties(m).map(function(f){return '<span class="badge b-blue" style="font-size:9px;">'+f+'</span>';}).join(' ')+'</div>'+
+      '<div style="font-size:10px;color:#8AB4CC;">'+(m.email||'—')+(m.gsm?' · '+m.gsm:'')+'</div>'+
+      (m.werkjaar?'<div style="font-size:9px;color:rgba(239,196,15,0.55);">'+m.werkjaar+'</div>':'')+
+      '</div>'+
+      (kanBewerken?'<div style="display:flex;gap:4px;"><button class="btn btn-sm btn-danger" onclick="rmLocalBestuur(\''+afd+'\','+i+')">'+ICO.trash+'</button></div>':'')+
+    '</div>';}).join('')}
+
+    <div class="modal-footer"><button class="btn" onclick="closeLbModal()">Sluiten</button></div>
+  </div></div>`;
+}
+function addLocalBestuur(afd){
+  if(!canEditBestuur(afd))return;
+  const f=readLbForm();
+  const voornaam=(f.voornaam||'').trim(), familienaam=(f.familienaam||'').trim();
+  if(!voornaam&&!familienaam){alert('Vul minstens een voornaam of familienaam in.');return;}
+  if(!DB.localBestuur[afd])DB.localBestuur[afd]=[];
+  DB.localBestuur[afd].push({voornaam:voornaam,familienaam:familienaam,functies:f.functies||[],email:(f.email||'').trim(),gsm:(f.gsm||'').trim(),werkjaar:(f.werkjaar||'').trim(),ts:tsNow()});
+  logChange('Bestuurslid toegevoegd',afd,'bestuur','',(voornaam+' '+familienaam).trim(),nowStr());
+  S.lbDraft=null;sdb();render();
+}
 function rmLocalBestuur(afd,idx){
-  if(!canEditAfd(afd))return;
+  if(!canEditBestuur(afd))return;
   if(!confirm('Bestuurslid verwijderen?'))return;
   const m=DB.localBestuur[afd][idx];
-  if(m?.email){delete DB.pw[m.email];delete DB.pending[m.email];}
   DB.localBestuur[afd].splice(idx,1);
+  logChange('Bestuurslid verwijderd',afd,'bestuur',(m?memberNaam(m):''),'',nowStr());
   sdb();render();
 }
 
-function resendLocalBestuur(email,afd){
-  const tok=genTok();
-  DB.pending[email]={token:tok,ts:Date.now()};
-  sdb();
-  const link=location.origin+location.pathname+'?token='+tok;
-  const m=(DB.localBestuur[afd]||[]).find(x=>x.email===email)||{};
-  showEmailSim(email,'Nieuwe toegangslink — JCI LA-platform',`Beste ${m.naam||''},\n\nNieuwe toegangslink:\n${link}\n\nMet vriendelijke groeten,\n${DB.vz[afd]?.naam||'Afdelingsvoorzitter'}`);
-}
-
-// ═══════════════════════════════════════════
-// VZ PAGE FUNCTIONS (used as pages in sidebar layout)
-// ═══════════════════════════════════════════
 function rVzMain(){
   // The main VZ dashboard - wraps the existing rVZ content extraction
   const afd=S.afd;
@@ -1897,7 +1877,7 @@ function rVzMain(){
           <span style="color:#8AB4CC;">E-mail</span><span style="font-size:11px;color:#8AB4CC;">${vz.email||'—'}</span>
           <span style="color:#8AB4CC;">${t('werkjaar')}</span><span><span class="badge ${vz.werkjaar==='academie'?'b-purple':'b-blue'}">${werkjaarLabel(vz.werkjaar||'kalender')}</span></span>
         </div>
-        ${S.role==='vz'?`<button class="btn btn-sm" style="margin-top:10px;width:100%;" onclick="S.modal='local-bestuur';render()">${ICO.usrplus} Lokaal bestuur beheren</button>`:''}
+        ${S.role==='vz'?`<button class="btn btn-sm" style="margin-top:10px;width:100%;" onclick="S.beheerAfd=null;S.modal='local-bestuur';render()">${ICO.usrplus} Lokaal bestuur beheren</button>`:''}
       </div>
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
@@ -1948,19 +1928,19 @@ function rVzMain(){
       });
       return`<div class="card" style="margin-top:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div class="card-title" style="margin:0;">Leden afdeling (${allMembers.length})</div>
-          ${S.role==='vz'?`<button class="btn btn-primary btn-sm" onclick="S.modal='local-bestuur';render()" title="Ledentelling toevoegen">${ICO.people2} Leden</button>`:''}
+          <div class="card-title" style="margin:0;">Lokale bestuursleden (${allMembers.length})</div>
+          ${S.role==='vz'?`<button class="btn btn-primary btn-sm" onclick="S.beheerAfd=null;S.modal='local-bestuur';render()" title="Bestuursleden beheren">${ICO.usrplus} Beheren</button>`:''}
         </div>
         ${allMembers.length===0
           ?`<div style="color:var(--text2);font-size:11px;">Nog geen leden toegevoegd.</div>`
           :allMembers.map(lid=>{
-            const initials=(lid.naam||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+            const initials=(memberNaam(lid)||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
             const rolBadge=lid.rol==='vz'?'b-blue':(lid.rol==='bestuurslid'||lid.rol==='localBestuur')?'b-teal':'b-gray';
             const rolLabel=lid.rol==='vz'?t('voorzitter'):(lid.rol==='bestuurslid'||lid.rol==='localBestuur')?'Bestuurslid':'Lid';
             return`<div class="av-item" style="padding:5px 0;">
               <div style="width:26px;height:26px;border-radius:50%;background:rgba(0,151,215,0.18);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#0097D7;flex-shrink:0;">${initials}</div>
               <div style="flex:1;">
-                <div style="font-size:11px;color:#fff;font-weight:600;">${lid.naam||'—'} ${lid.functie?`<span style="font-size:9px;color:#8AB4CC;font-weight:400;">${lid.functie}</span>`:''}</div>
+                <div style="font-size:11px;color:#fff;font-weight:600;">${memberNaam(lid)||'—'} ${memberFuncties(lid).map(f=>`<span class="badge b-blue" style="font-size:8px;">${f}</span>`).join(' ')}</div>
                 <div style="font-size:9px;color:rgba(239,196,15,0.55);">
                   ${lid.email?`<a href="mailto:${lid.email}" style="color:#0097D7;text-decoration:none;">${lid.email}</a>`:''}
                   ${lid.gsm?` · <a href="tel:${lid.gsm}" style="color:#57BCBC;">${lid.gsm}</a>`:''}
@@ -1972,7 +1952,7 @@ function rVzMain(){
         }
       </div>`;
     })()}
-    ${S.modal==='local-bestuur'?rLocalBestuurModal():''}
+    ${S.modal==='local-bestuur'?rLocalBestuurModal():''}${S.modal==='new-cred'?rNewCredModal():''}${S.modal==='popup'?rPopupModal():''}
   </div>`;}
 
 function rVzMapWrap(){
@@ -2744,7 +2724,7 @@ function setJciVolmachtAdmin(avId,afd,ontvanger){
 
 // K1: Rechten tabblad
 function rRechten(){
-  const roles=['bestuur','vz','localBestuur','lid'];
+  const roles=['bestuur','vz'];
   const roleLabels={bestuur:'Bestuur JCI Vl.',vz:'Afdelingsvoorzitter',localBestuur:'Lokaal bestuurslid',lid:'Lokaal lid'};
   const roleBadgeColors={bestuur:'b-blue',vz:'b-teal',localBestuur:'b-purple',lid:'b-gray'};
   const rechten=DB.rechten||{};
@@ -2762,6 +2742,8 @@ function rRechten(){
     {id:'kaart',label:'Kaart afdelingen',group:'Overige'},
     {id:'bezoek',label:'Bezoekplanning',group:'Overige'},
     {id:'laInfo',label:'LA info (gedeelde info & links)',group:'Overige'},
+    {id:'bestuurEigen',label:'Bestuursleden eigen afdeling',group:'Lokale bestuursleden'},
+    {id:'bestuurAnder',label:'Bestuursleden andere afdeling',group:'Lokale bestuursleden'},
     {id:'gebruikers',label:'Gebruikers & rechten',group:'Overige'},
     {id:'log',label:'Aanpassingslog',group:'Overige'},
     {id:'import',label:'Import/Export JSON',group:'Overige'},
@@ -2818,7 +2800,7 @@ function rRolPopup(){
   if(!u)return'';
   if(!isAdmin()){S.modal=null;render();return'';}
   const isOwnAdmin=u.email===S.user;
-  const canAssign=['bestuur','vz','localBestuur','lid'];
+  const canAssign=['bestuur','vz'];
   const roleLabels={bestuur:'Bestuur JCI Vl.',vz:'Afdelingsvoorzitter',localBestuur:'Lokaal bestuurslid',lid:'Lokaal lid'};
   const roleColors={bestuur:'#0097D7',vz:'#57BCBC',localBestuur:'#8F89D4',lid:'rgba(255,255,255,0.4)'};
   const roleDesc={bestuur:'Bijna volledige toegang, geen log/gebruikersbeheer',vz:'Eigen afdeling bewerken + alle afdelingen lezen',localBestuur:'Eigen afdeling lezen',lid:'Minimale leesrechten'};
@@ -2920,7 +2902,7 @@ function bevestigOverdracht(afd){
     DB.pw[e]=pw;
     if(!DB.localBestuur[afd])DB.localBestuur[afd]=[];
     DB.localBestuur[afd].push({naam:n,functie:'Voorzitter',email:e,gsm:g,rol:'vz',werkjaar:werkjaarLabel((DB.werkjaarConfig&&DB.werkjaarConfig[afd]?.type)||DB.vz[afd]?.werkjaar||'kalender'),ts:tsNow()});
-    setTimeout(function(){alert("Nieuwe voorzitter toegevoegd.\n\nLogin: "+e+"\nWachtwoord: "+pw+"\n\n(Zichtbaar en aanpasbaar in de gebruikerslijst.)");},50);
+    setTimeout(function(){showNewCred(n,e,pw,afd,null);},60);
     // Update vz record
     if(!DB.vz[afd])DB.vz[afd]={};
     DB.vz[afd]={naam:n,email:e,gsm:g,werkjaar:DB.vz[afd]?.werkjaar||'kalender'};
@@ -4120,6 +4102,57 @@ function renderRechtenRows(modules,roles,getRecht){
   return rows;
 }
 
+function rBesturenOverzicht(){
+  if(!hasRecht('gebruikers','ro'))return'';
+  var rows=[];
+  ALL.forEach(function(afd){var v=DB.vz[afd];if(v&&(v.naam||v.email))rows.push({afd:afd,naam:v.naam||memberNaam(v),functie:'Voorzitter',gsm:v.gsm||'',email:v.email||'',wj:v.werkjaar?werkjaarLabel(v.werkjaar):'',type:'vz'});});
+  Object.keys(DB.localBestuur||{}).forEach(function(afd){(DB.localBestuur[afd]||[]).forEach(function(m){rows.push({afd:afd,naam:memberNaam(m),functie:memberFuncties(m).join(', '),gsm:m.gsm||'',email:m.email||'',wj:m.werkjaar||'',type:'lid'});});});
+  rows.sort(function(a,b){return (a.afd+a.type+a.naam).localeCompare(b.afd+b.type+b.naam);});
+  return`<div class="card">
+    <div class="card-title" style="margin-bottom:8px;">Lokale besturen \u2014 overzicht (${rows.length})</div>
+    <div style="font-size:11px;color:#8AB4CC;margin-bottom:10px;">Alle afdelingsvoorzitters (gebruikers) en lokale bestuursleden (contactinfo, geen logins).</div>
+    <div class="tbl-wrap"><table class="dt"><thead><tr>
+      <th>Afdeling</th><th>Naam</th><th>Functie</th><th>GSM</th><th>E-mail</th><th>Werkingsjaar</th>
+    </tr></thead><tbody>
+    ${rows.map(function(r){return '<tr><td>'+r.afd+'</td><td><b>'+(r.naam||'\u2014')+'</b>'+(r.type==='vz'?' <span class="badge b-blue" style="font-size:8px;">Voorzitter</span>':'')+'</td><td>'+(r.functie||'\u2014')+'</td><td>'+(r.gsm?'<a href="tel:'+r.gsm+'" style="color:#57BCBC;">'+r.gsm+'</a>':'\u2014')+'</td><td>'+(r.email?'<a href="mailto:'+r.email+'" style="color:#0097D7;">'+r.email+'</a>':'\u2014')+'</td><td>'+(r.wj||'\u2014')+'</td></tr>';}).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+function ppToday(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function activePopups(){var t=ppToday();var role=S.role;return (DB.popups||[]).filter(function(p){if(p.from&&t<p.from)return false;if(p.to&&t>p.to)return false;if(p.roles&&p.roles.length&&p.roles.indexOf(role)===-1)return false;return true;});}
+function queuePopups(){if(!S.user)return;var t=ppToday();if(!DB.popupSeen)DB.popupSeen={};var seen=DB.popupSeen[S.user]||{};var q=activePopups().filter(function(p){return seen[p.id]!==t;});if(!q.length)return;q.forEach(function(p){seen[p.id]=t;});DB.popupSeen[S.user]=seen;sdb();S.popupQueue=q;S.modal='popup';}
+function nextPopup(){if(S.popupQueue&&S.popupQueue.length>1){S.popupQueue=S.popupQueue.slice(1);render();}else{S.popupQueue=null;S.modal=null;render();}}
+function rPopupModal(){var p=(S.popupQueue||[])[0];if(!p)return'';var n=(S.popupQueue||[]).length;return`<div class="modal-bg"><div class="modal" onclick="event.stopPropagation()" style="max-width:440px;">
+    <div class="modal-title">${p.title||'Melding'}</div>
+    <div style="font-size:12px;color:#C8DFF0;line-height:1.7;white-space:pre-wrap;margin-bottom:14px;">${(p.text||'').replace(/</g,'&lt;')}</div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="nextPopup()">${n>1?'Volgende ('+n+')':'OK'}</button></div>
+  </div></div>`;}
+function addPopup(){if(!isAdmin())return;var title=(document.getElementById('pp-title')||{}).value||'';var text=(document.getElementById('pp-text')||{}).value||'';var from=(document.getElementById('pp-from')||{}).value||'';var to=(document.getElementById('pp-to')||{}).value||'';var roles=[].slice.call(document.querySelectorAll('.pp-role:checked')).map(function(c){return c.value;});if(!text.trim()){alert('Vul een tekst in.');return;}if(!DB.popups)DB.popups=[];DB.popups.push({id:'pp'+Date.now(),title:title.trim(),text:text.trim(),from:from,to:to,roles:roles});sdb();render();}
+function rmPopup(id){if(!isAdmin())return;if(!confirm('Melding verwijderen?'))return;DB.popups=(DB.popups||[]).filter(function(p){return p.id!==id;});sdb();render();}
+function rMeldingen(){
+  if(!isAdmin())return'';
+  var roleLabels={admin:'Admin',bestuur:'Bestuur JCI Vl.',vz:'Voorzitter'};
+  var list=(DB.popups||[]);
+  return`<div class="card">
+    <div class="card-title" style="margin-bottom:8px;">Geplande meldingen (popups)</div>
+    <div style="font-size:11px;color:#8AB4CC;margin-bottom:12px;">Een melding verschijnt na het inloggen (ook in de testversie), \u00e9\u00e9n keer per dag per gebruiker, binnen de gekozen periode en enkel voor de gekozen rollen. Meerdere meldingen tonen na elkaar.</div>
+    <div style="background:#231E52;border-radius:8px;padding:12px;margin-bottom:14px;">
+      <div class="form-row"><label class="form-label">Titel</label><input class="form-input" id="pp-title" placeholder="bv. Belangrijke mededeling"/></div>
+      <div class="form-row"><label class="form-label">Tekst</label><textarea class="form-input" id="pp-text" rows="4" placeholder="Bericht\u2026"></textarea></div>
+      <div class="form-grid2">
+        <div class="form-row"><label class="form-label">Van (datum)</label><input class="form-input" id="pp-from" type="date"/></div>
+        <div class="form-row"><label class="form-label">Tot (datum)</label><input class="form-input" id="pp-to" type="date"/></div>
+      </div>
+      <div class="form-row"><label class="form-label">Toon aan</label>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;background:rgba(0,0,0,0.15);border-radius:6px;padding:9px 11px;">
+          ${Object.keys(roleLabels).map(function(r){return '<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:#C8DFF0;cursor:pointer;"><input type="checkbox" class="pp-role" value="'+r+'" checked/> '+roleLabels[r]+'</label>';}).join('')}
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="addPopup()">${ICO.plus} Melding plannen</button>
+    </div>
+    ${list.length===0?'<div style="color:#8AB4CC;font-size:12px;">Nog geen meldingen gepland.</div>':list.map(function(p){return '<div class="av-item"><div style="flex:1;"><div style="font-weight:600;font-size:12px;color:#fff;">'+(p.title||'(geen titel)')+'</div><div style="font-size:10px;color:#8AB4CC;white-space:pre-wrap;">'+(p.text||'').replace(/</g,'&lt;').slice(0,120)+'</div><div style="font-size:9px;color:rgba(239,196,15,0.55);">'+(p.from||'\u2026')+' \u2192 '+(p.to||'\u2026')+' \u00b7 '+((p.roles||[]).map(function(r){return roleLabels[r]||r;}).join(', ')||'alle rollen')+'</div></div><button class="btn btn-sm btn-danger" onclick="rmPopup(\''+p.id+'\')">'+ICO.trash+'</button></div>';}).join('')}
+  </div>`;
+}
 function rUsr(){
   // Veiligheidscontrole: zonder leesrecht op 'gebruikers' geen toegang tot dit scherm.
   if(!hasRecht('gebruikers','ro'))return`<div class="page active"><div class="page-title" style="margin-bottom:8px;">${t('gebruikers')}</div><div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_toegang_scherm')}</div></div></div>`;
@@ -4127,13 +4160,6 @@ function rUsr(){
   Object.entries(DB.vz).forEach(([afd,v])=>{if(v.email)users.push({type:'vz',role:'vz',afd,email:v.email,naam:v.naam||'',gsm:v.gsm||'',werkjaar:v.werkjaar||'kalender',pending:!!DB.pending[v.email]});});
   DB.admins.forEach(e=>{if(!users.find(u=>u.email===e))users.push({type:'admin',role:'admin',afd:'—',email:e,naam:e,gsm:'',werkjaar:'',pending:!!DB.pending[e]});});
   (DB.bestuur||[]).forEach(e=>{if(!users.find(u=>u.email===e))users.push({type:'bestuur',role:'bestuur',afd:'JCI Vlaanderen',email:e,naam:e,gsm:'',werkjaar:'',pending:!!DB.pending[e]});});
-  Object.entries(DB.localBestuur||{}).forEach(([afd,leden])=>{
-    leden.forEach(m=>{
-      if(m.email&&!users.find(u=>u.email===m.email)){
-        users.push({type:m.rol||'localBestuur',role:m.rol||'localBestuur',afd,email:m.email,naam:m.naam||'',gsm:m.gsm||'',functie:m.functie||'',werkjaar:m.werkjaar||'',pending:!!DB.pending[m.email]});
-      }
-    });
-  });
   // P8: laatst ingelogd toevoegen
   users.forEach(u=>{u.lastLogin=(DB.lastLogin||{})[u.email]||'';});
   // P8: zoekfilter (naam, email, afdeling)
@@ -4157,9 +4183,11 @@ function rUsr(){
   return`<div class="page active">
     <div class="page-title" style="margin-bottom:8px;">${t('gebruikers')}</div>
     <div style="display:flex;gap:0;margin-bottom:14px;border-bottom:0.5px solid rgba(255,255,255,0.1);overflow-x:auto;scrollbar-width:none;">
-      ${['gebruikers','rechten','email'].map(tab=>`<button onclick="S.usrTab='${tab}';render()" style="font-size:10px;padding:6px 14px;background:transparent;border:none;border-bottom:2px solid ${(S.usrTab||'gebruikers')===tab?'#0097D7':'transparent'};color:${(S.usrTab||'gebruikers')===tab?'#0097D7':'rgba(255,255,255,0.4)'};cursor:pointer;">${tab==='gebruikers'?t('gebruikers'):tab==='rechten'?'Rechten':'E-mail'}</button>`).join('')}
+      ${['gebruikers','rechten','besturen','meldingen','email'].map(tab=>`<button onclick="S.usrTab='${tab}';render()" style="font-size:10px;padding:6px 14px;background:transparent;border:none;border-bottom:2px solid ${(S.usrTab||'gebruikers')===tab?'#0097D7':'transparent'};color:${(S.usrTab||'gebruikers')===tab?'#0097D7':'rgba(255,255,255,0.4)'};cursor:pointer;">${tab==='gebruikers'?t('gebruikers'):tab==='rechten'?'Rechten':tab==='besturen'?'Lokale besturen':tab==='meldingen'?'Meldingen':'E-mail'}</button>`).join('')}
     </div>
     ${(S.usrTab||'gebruikers')==='rechten'?rRechten():''}
+    ${(S.usrTab||'gebruikers')==='besturen'?rBesturenOverzicht():''}
+    ${(S.usrTab||'gebruikers')==='meldingen'?rMeldingen():''}
     <div id="usr-main-content" style="display:${(S.usrTab||'gebruikers')==='gebruikers'?'block':'none'}">
     ${hasRecht('import','ro')?`<div class="card" style="margin-bottom:12px;">
       <div class="card-title" style="margin-bottom:10px;">
@@ -4223,7 +4251,7 @@ function rUsr(){
           <td style="display:flex;gap:3px;flex-wrap:wrap;">
             <button class="btn btn-sm" onclick="openEditUser('${u.email}')" title="Bewerken">${ICO.edit}</button>
             ${isAdmin()?`<button class="btn btn-sm" onclick="mailPw('${u.email}')" title="Mail wachtwoord">${ICO.mail}</button>`:''}
-            ${u.role==='vz'?`<button class="btn btn-sm" style="font-size:9px;color:#57BCBC;border-color:rgba(87,188,188,0.3);" onclick="S.overdrachtAfd='${u.afd}';S.modal='overdracht';render()" title="Overdracht voorzitter">⇄</button>`:''}
+            ${u.role==='vz'?``:''}
             ${u.email!==SUPER?`<button class="btn btn-sm btn-danger" onclick="rmUser('${u.email}','${u.afd}','${u.type}')">${ICO.trash}</button>`:''}
           </td>
         </tr>`).join("")}
@@ -4241,6 +4269,7 @@ function rUsr(){
   </div>`;}
 
 function openEditUser(email){S.editUserEmail=email;S.modal='edit-user';render();}
+function resetVzPw(email){if(!isAdmin()||!email)return;var pw=genSimplePw(userNaam(email)||email.split('@')[0]);DB.pw[email]=pw;if(DB.pending)delete DB.pending[email];sdb();showNewCred(userNaam(email),email,pw,null,null);}
 function rEditUserModal(){
   const email=S.editUserEmail;
   const found=findUserRecord(email);
@@ -4271,6 +4300,7 @@ function rEditUserModal(){
       <option value="academie" ${v.werkjaar==='academie'?'selected':''}>${t('academie')}</option>
     </select></div>`:''}
     <div class="modal-footer"><button class="btn" onclick="S.modal=null;render()">${t('annuleren')}</button>
+      ${isVz?`<button class="btn" onclick="resetVzPw('${email}')" title="Nieuw wachtwoord + mailen">${ICO.mail} Wachtwoord resetten</button>`:''}
       <button class="btn btn-primary" onclick="saveEditUser('${email}','${afd}',${isVz})">Opslaan</button>
     </div></div></div>`;}
 function saveEditUser(oldEmail,oldAfd,isVz){
@@ -4379,8 +4409,8 @@ function doAddUser(){
   if(role==="vz"){if(!DB.vz[afd])DB.vz[afd]={};DB.vz[afd].email=email;DB.vz[afd].naam=naam;DB.vz[afd].gsm=gsm;DB.vz[afd].werkjaar=wj;}
   else{if(!DB.admins.includes(email))DB.admins.push(email);}
   DB.pw[email]=pw;
-  sdb();S.modal=null;render();
-  alert("Gebruiker toegevoegd.\n\nLogin: "+email+"\nWachtwoord: "+pw+"\n\n(Zichtbaar en aanpasbaar in de gebruikerslijst.)");
+  sdb();
+  showNewCred(naam||email,email,pw,null,null);
 }
 
 function rBulkModal(){return`<div class="modal-bg" onclick="S.modal=null;render()"><div class="modal" onclick="event.stopPropagation()" style="width:480px;">
