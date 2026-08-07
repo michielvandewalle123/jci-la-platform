@@ -1933,7 +1933,7 @@ function rVzMain(){
         </div>
         ${allMembers.length===0
           ?`<div style="color:var(--text2);font-size:11px;">Nog geen leden toegevoegd.</div>`
-          :allMembers.map(lid=>{
+          :`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0 20px;">`+allMembers.map(lid=>{
             const initials=(memberNaam(lid)||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
             const rolBadge=lid.rol==='vz'?'b-blue':(lid.rol==='bestuurslid'||lid.rol==='localBestuur')?'b-teal':'b-gray';
             const rolLabel=lid.rol==='vz'?t('voorzitter'):(lid.rol==='bestuurslid'||lid.rol==='localBestuur')?'Bestuurslid':'Lid';
@@ -1946,9 +1946,8 @@ function rVzMain(){
                   ${lid.gsm?` · <a href="tel:${lid.gsm}" style="color:#57BCBC;">${lid.gsm}</a>`:''}
                 </div>
               </div>
-              <span class="badge ${rolBadge}" style="font-size:8px;">${rolLabel}</span>
             </div>`;
-          }).join('')
+          }).join('')+`</div>`
         }
       </div>`;
     })()}
@@ -2751,12 +2750,13 @@ function rRechten(){
 
   function getRecht(rol,mod){
     // Use DB.rechten if explicitly set, otherwise fall back to DEFAULT_RECHTEN
-    const r=rechten[rol]||(DEFAULT_RECHTEN[rol]||{});
-    if(r.all===2||r.all==='rw')return'rw';
-    const val=r[mod];
+    const base=DEFAULT_RECHTEN[rol]||{};
+    const over=rechten[rol]||{};
+    if(base.all===2||base.all==='rw'||over.all===2||over.all==='rw')return'rw';
+    const val=(over[mod]!==undefined?over[mod]:base[mod]);
     if(val===undefined)return'none';
-    if(val>=2)return'rw';
-    if(val>=1)return'ro';
+    if(val>=2||val==='rw')return'rw';
+    if(val>=1||val==='ro')return'ro';
     return'none';
   }
 
@@ -2980,9 +2980,10 @@ function openRolPopup(email,naam,role,afd){S.rolPopupUser={email,naam,role,afd};
 
 function hasRecht(module,minLevel){
   const rol=S.role||'vz';
-  const r=DB.rechten&&DB.rechten[rol]?DB.rechten[rol]:DEFAULT_RECHTEN[rol]||{};
-  if(r.all===2)return true;
-  const rawVal=r[module];
+  const base=DEFAULT_RECHTEN[rol]||{};
+  const over=(DB.rechten&&DB.rechten[rol])||{};
+  if(base.all===2||over.all===2)return true;
+  const rawVal=(over[module]!==undefined?over[module]:base[module]);
   const val=rawVal==='rw'?2:rawVal==='ro'?1:rawVal!==undefined?Number(rawVal):0;
   if(minLevel==='rw')return val>=2;
   return val>=1;
