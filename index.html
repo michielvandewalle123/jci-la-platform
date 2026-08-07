@@ -341,7 +341,9 @@ const EXTRA_DIST={
 function provAfds(prov){ if(prov==="alle")return afdsWithInactive(); return (DIST[prov]||ALL).concat(EXTRA_DIST[prov]||[]); }
 const SUPER="michiel.vandewalle@jcivlaanderen.be";
 const DEFAULT_RECHTEN={admin:{all:2},bestuur:{avEigen:2,avAnder:2,afdEigen:2,afdAnder:2,ledenEigen:2,ledenAnder:2,jciAvBeheer:2,jciAvEigen:2,jciAvAnder:2,kaart:2,bezoek:2,laInfo:2,bestuurEigen:0,bestuurAnder:1,gebruikers:0,log:0,import:0},vz:{avEigen:2,avAnder:1,afdEigen:2,afdAnder:1,ledenEigen:2,ledenAnder:1,jciAvBeheer:0,jciAvEigen:2,jciAvAnder:1,kaart:1,bezoek:2,laInfo:1,bestuurEigen:2,bestuurAnder:1,gebruikers:0,log:0,import:0}};
-const VERSION={num:"3.0",datum:"07/08/2026",changes:[
+const VERSION={num:"3.2",datum:"07/08/2026",changes:[
+  {v:"3.2",datum:"07/08/2026",items:["\u00a9 Michiel Vandewalle onder het versienummer, met contactinfo bij het zweven met de muis","Kaart: filter Actief/Inactief/Alle is terug beschikbaar voor voorzitters","Lichte modus leesbaarder: rechtentabel-iconen, afdelingsnamen in de ledentabel en vergrendelde cellen","Grafiek 'Per afdeling/provincie': leden in donkergrijs, kandidaat-leden in lichtgrijs; legende nu leesbaar","Lege lijsten tonen 'Nog geen bestuursleden toegevoegd' / 'Nog geen AV's toegevoegd'; 'AG's' hernoemd naar 'AV's'","Bezoekplanning verschijnt enkel bij voldoende rechten","Gegevens JCI Kortrijk (Margot Deryckere) gecontroleerd en wachtwoord vernieuwd"]},
+  {v:"3.1",datum:"07/08/2026",items:["Voorzitter kan bestuursleden nu ook beheren vanaf de afdelingspagina (Beheren-knop altijd zichtbaar)","Bestuursleden kunnen nu bewerkt worden, niet enkel verwijderd","Werkingsjaren chronologisch geordend (2025, 2025-2026, 2026, ...)","Bestuursleden worden nu vóór de lokale AV's getoond","'Bewerken' (afdelingsinfo) staat nu naast de afdelingsnaam i.p.v. in het voorzitter-kader","Dubbele knop 'Lokaal bestuur beheren' verwijderd","Externe inschrijflink van AV JCI Vlaanderen werkt nu (https:// wordt automatisch aangevuld)","Kaart: inactieve afdelingen nu grijs i.p.v. provinciekleur","Ledentelling telt inactieve afdelingen niet meer mee"]},
   {v:"3.0",datum:"07/08/2026",items:["'Bekijk als voorzitter' verwijderd","Thema-schakelaar is nu een schuifknop (zon/maan), net boven de taalknoppen","AV JCI Vlaanderen: de 'aanwezig'-knop is nu groen i.p.v. donkerblauw (beide weergaves)","Lichte modus leesbaarder: donkerblauwe knoppen houden witte tekst; te lichte tabbladen/filters zijn donkerder","JCI-logo in lichte modus: het wit wordt JCI-donkerblauw","'Kandidaten' hernoemd naar 'Kandidaat-leden'"]},
   {v:"2.9",datum:"07/08/2026",items:["Licht/donker-thema: schakelaar (zon/maan) in de zijbalk bij de taalknoppen; de keuze wordt per toestel onthouden","Volledige lay-out omgezet naar thema-variabelen in JCI-kleuren, met leesbare lichte weergave op alle schermen"]},
   {v:"2.8",datum:"06/08/2026",items:["Gebruikersrollen 'lokaal bestuurslid' en 'lid' afgeschaft — enkel admin, bestuur JCI Vl. en afdelingsvoorzitter kunnen nog inloggen","Lokale bestuursleden zijn nu contactinfo (geen logins): voornaam, familienaam, functie(s) aanvinkbaar, e-mail, GSM, werkingsjaar","Afd-detail opgeschoond: 'Alle leden' verwijderd; ledenaantallen-tabel enkel voor admin of eigen voorzitter","Nieuwe rechten voor bestuursleden (eigen/andere afdeling, zien/bewerken); admin kan ze instellen","Admin-tab 'Lokale besturen': overzicht van alle voorzitters en bestuursleden","Overdracht voorzitter vereenvoudigd: admin past de voorzitter-gegevens aan en reset het wachtwoord","Admin kan geplande meldingen (popups) tonen na login, per rol en periode"]},
@@ -383,7 +385,7 @@ const T={
     bezoek_toevoegen:"Bezoek plannen",bezoek_bewerken:"Bezoek bewerken",
     av_notities:"Notities bij AV",actiepunten:"Actiepunten",verslag:"Verslag",
     export_excel:"Exporteer Excel",
-    geen_avs:"Geen AV's",geen_data:"Geen data",geen_datum:"Geen datum",
+    geen_avs:"Nog geen AV's toegevoegd",geen_data:"Geen data",geen_datum:"Geen datum",
     werkjaar:"Werkjaar",district:"District",naam:"Naam",gsm:"GSM",
     kalender:"Kalenderjaar",academie:"Academiejaar",
     directeur:"Directeur",bestuur:"JCI Bestuur",
@@ -611,7 +613,7 @@ let S={view:"login",user:null,role:null,afd:null,
   editUserEmail:null,noteAfd:null,
   chartView:"afd",chartType:"leden",chartProv:"alle",
   afdMapDragMode:false,
-  chartsInited:false,bulkLedenParsed:[],logFilterAfd:'alle',logFilterType:'alle',importMsg:null,viewAs:null,pwModal:false,pwErr:'',pwOk:'',lang:'nl',visitModal:null,avNotesId:null,chartTijdAfd:'',chartTijdProv:'alle',afdDetail:null,visitEditId:null,avSortMode:'chronologisch',avFilterAfd:'alle',avFilterPeriod:'komende',avFilterWj:'alle',avFilterVan:'',avFilterTot:'',avFilterBezocht:'alle',afdChartType:'leden',inaktiefAfd:null,afdFilterAktief:'aktief',avModalDatum:'',jciAvTab:'upcoming',jciAvEdit:null,jciAvDetail:null,jciAvDatum:'',jciVolmachtAv:null,afdWerkjaar:null,showWjDd:null,afdSortMode:'naam',afdGroupMode:'provincie',avListTab:'lijst',usrTab:'gebruikers',usrZoek:'',usrSort:'afd',usrSortDir:'asc',rolPopupUser:null,overdrachtAfd:null,lhInfoIdx:null,showCredits:false,profielTab:'gegevens',profielErr:'',profielOk:''
+  chartsInited:false,bulkLedenParsed:[],logFilterAfd:'alle',logFilterType:'alle',importMsg:null,viewAs:null,pwModal:false,pwErr:'',pwOk:'',lang:'nl',visitModal:null,avNotesId:null,chartTijdAfd:'',chartTijdProv:'alle',afdDetail:null,visitEditId:null,avSortMode:'chronologisch',avFilterAfd:'alle',avFilterPeriod:'komende',avFilterWj:'alle',avFilterVan:'',avFilterTot:'',avFilterBezocht:'alle',afdChartType:'leden',inaktiefAfd:null,afdFilterAktief:'aktief',avModalDatum:'',jciAvTab:'upcoming',jciAvEdit:null,jciAvDetail:null,jciAvDatum:'',jciVolmachtAv:null,afdWerkjaar:null,showWjDd:null,afdSortMode:'naam',afdGroupMode:'alle',avListTab:'lijst',usrTab:'gebruikers',usrZoek:'',usrSort:'afd',usrSortDir:'asc',rolPopupUser:null,overdrachtAfd:null,lhInfoIdx:null,showCredits:false,profielTab:'gegevens',profielErr:'',profielOk:''
 };
 let leafletAfdMap=null,chartInst=null,afdMapMarkers={};
 
@@ -706,6 +708,7 @@ function currentTheme(){try{return localStorage.getItem('jci-theme')==='light'?'
 function applyTheme(){try{document.documentElement.setAttribute('data-theme',currentTheme());}catch(e){}}
 function themeSlider(){var light=currentTheme()==='light';return `<div onclick="toggleTheme()" title="Wissel licht/donker" style="display:inline-flex;align-items:center;justify-content:space-between;width:48px;height:22px;border-radius:20px;background:var(--navy4);border:1px solid var(--border2);cursor:pointer;position:relative;padding:0 4px;font-size:11px;line-height:1;margin-bottom:6px;"><span style="opacity:${light?'1':'0.3'};color:var(--gold);">&#9728;</span><span style="opacity:${light?'0.3':'1'};color:var(--text2);">&#9790;</span><span style="position:absolute;top:1px;left:${light?'2px':'25px'};width:18px;height:18px;border-radius:50%;background:var(--gold);box-shadow:0 1px 2px rgba(0,0,0,0.35);transition:left .15s;"></span></div>`;}
 function toggleTheme(){var t=currentTheme()==='light'?'dark':'light';try{localStorage.setItem('jci-theme',t);}catch(e){}applyTheme();render();}
+function extUrl(u){u=(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u;}
 function isAdmin(){return S.role==='admin';}
 function isLocalVZ(){return S.role==='vz'||S.role==='localBestuur';}
 function isBestuur(){return S.role==='bestuur';}
@@ -946,7 +949,7 @@ function rVZ(){
           <option value="academie" ${vz.werkjaar==="academie"?"selected":""}>${t('academie')}</option>
         </select></div>
         ${S.role==='vz'?`<button class="btn btn-primary btn-sm" onclick="saveVZProfiel()">${t('opslaan')}</button>`:''}
-        ${S.role==='vz'?`<button class="btn btn-sm" style="margin-top:6px;width:100%;" onclick="S.beheerAfd=null;S.modal='local-bestuur';render()">${ICO.usrplus} Lokaal bestuur beheren</button>`:''}
+        ${S.role==='vz'?``:''}
       </div>
       <div class="vz-card">
         <div class="card-title">${t('leden_lbl')} & ${t('kandidaten')}</div>
@@ -969,7 +972,7 @@ function rVZ(){
       </div>
     </div>
     <div class="vz-card" style="max-width:900px;margin:14px auto 0;">
-      <div class="card-title">AG's — ${afd}</div>
+      <div class="card-title">AV's — ${afd}</div>
       ${avs.length===0?`<div style="color:var(--text2);font-size:12px;padding:10px 0;">Nog geen AV's ingegeven.</div>`:""}
       ${avs.map(av=>`<div class="av-item"><div><div class="av-name">${fd(av.datum)}${av.uur?` · ${av.uur}`:""}</div><div class="av-meta">${av.locatie||""}${av.adres?` — ${av.adres}`:""}</div></div>
         <div style="display:flex;gap:5px;">
@@ -1063,12 +1066,12 @@ function rAdmin(){
       <img class="logo-dark" src="data:image/png;base64,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" alt="JCI Vlaanderen" style="width:120px;height:auto;display:block;margin-bottom:2px;"/><img class="logo-light" src="data:image/png;base64,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" alt="JCI Vlaanderen" style="width:120px;height:auto;display:block;margin-bottom:2px;"/>
       <div class="sb-logo-title">LA-platform</div>
       <div class="sb-logo-sub" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-        ${isAdmin()?`<span onclick="S.modal='versie';render();" style="font-size:9px;color:var(--gold-soft);cursor:pointer;text-decoration:underline dotted;" title="${t('versie')}">${t('versie')} ${VERSION.num}</span>`:`<span style="font-size:9px;color:var(--gold-soft);">${t('versie')} ${VERSION.num}</span>`}${'<span class="theme-mobile">'+themeSlider()+'</span>'}
+        ${isAdmin()?`<span onclick="S.modal='versie';render();" style="font-size:9px;color:var(--gold-soft);cursor:pointer;text-decoration:underline dotted;" title="${t('versie')}">${t('versie')} ${VERSION.num}</span>`:`<span style="font-size:9px;color:var(--gold-soft);">${t('versie')} ${VERSION.num}</span>`}${'<span class="theme-mobile">'+themeSlider()+'</span>'}<div style="width:100%;font-size:8px;color:var(--text3);cursor:help;margin-top:2px;" title="Dit platform voor lokale afdelingen van JCI (LA platform) werd in 2026 ontwikkeld. Indien vragen of problemen contacteer me. 0032 472 27 60 90 of michiel.vandewalle@jcivlaanderen.be">\u00a9 Michiel Vandewalle</div>
       </div>
     </div>
       <div class="sb-nav">
         <div class="sb-section">${t('navigatie')}</div>
-        ${nav.filter(n=>!n.adminOnly&&!n.logOnly).map(n=>`<div class="sb-item ${S.view===n.id?'active':''}" onclick="switchView('${n.id}')"><span aria-hidden="true" style="display:inline-flex;align-items:center;">${n.icon}</span> ${n.labelKey?t(n.labelKey):n.label}</div>`).join("")}
+        ${nav.filter(n=>!n.adminOnly&&!n.logOnly&&navAllowed(n.id)).map(n=>`<div class="sb-item ${S.view===n.id?'active':''}" onclick="switchView('${n.id}')"><span aria-hidden="true" style="display:inline-flex;align-items:center;">${n.icon}</span> ${n.labelKey?t(n.labelKey):n.label}</div>`).join("")}
         ${(hasRecht('gebruikers','ro')||hasRecht('log','ro'))?`
         <div class="sb-section" style="margin-top:14px;">${t('admin_sectie')}</div>
         ${hasRecht('gebruikers','ro')?`<div class="sb-item ${S.view==='usr'?'active':''}" onclick="switchView('usr');S.usrTab='gebruikers';render()"><span aria-hidden="true" style="display:inline-flex;align-items:center;">${ICO.usr}</span> ${t('gebruikers_rechten')}</div>`:''}
@@ -1139,8 +1142,8 @@ function rDB(){
   const bezAfd=new Set(DB.avs.filter(a=>a.aanwezig===true).map(a=>a.afdeling)).size;
   const noDate=ALL.filter(a=>!DB.avs.find(av=>av.afdeling===a));
   const upcoming=visibleAvs.filter(a=>a.datum>=today).sort((a,b)=>a.datum.localeCompare(b.datum)).slice(0,5);
-  const totalLeden=ALL.reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0);
-  const totalKand=ALL.reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0);
+  const totalLeden=ALL.filter(a=>DB.afdInfo[a]?.aktief!==false).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0);
+  const totalKand=ALL.filter(a=>DB.afdInfo[a]?.aktief!==false).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0);
   return`<div class="page active">
     <div class="topbar"><div><div class="page-title">${t('dashboard')}</div><div class="page-sub">${MON[tm]} ${ty}</div></div></div>
     ${rDashJciAv()}
@@ -1224,7 +1227,7 @@ function rKal(){
         </div>`).join('')}
       </div>
       <div class="card"><div class="card-title">AV's — ${MON[m]}</div>
-        ${avs.length===0?`<div style="color:var(--text2);font-size:11px;">Geen AV's.</div>`:""}
+        ${avs.length===0?`<div style="color:var(--text2);font-size:11px;">Nog geen AV's toegevoegd.</div>`:""}
         ${avs.sort((a,b)=>a.datum.localeCompare(b.datum)).map(av=>`<div class="av-item">
           <div><div class="av-name" style="font-size:11px;">${av.afdeling}</div><div class="av-meta">${fd(av.datum)}${av.uur?` · ${av.uur}`:""}</div></div>
           ${canAttend(av.afdeling)?`<button class="attend-btn btn-sm ${av.aanwezig===true?'yes':av.aanwezig===false?'no':''}" onclick="togAan('${av.id}')">${av.aanwezig===true?ICO.check+' '+t('aanwezig'):av.aanwezig===false?ICO.xmark+' '+t('afwezig'):'?'}</button>`:''}
@@ -1240,7 +1243,7 @@ function rKal(){
 
 function exportICS(){
   const avs=DB.avs.filter(a=>a.datum);
-  if(avs.length===0){alert("Geen AV's om te exporteren.");return;}
+  if(avs.length===0){alert("Nog geen AV's toegevoegd om te exporteren.");return;}
   function icsDate(datum,uur){
     const[y,m,d]=datum.split('-');
     if(uur){const[h,mn]=uur.split(':');return y+m+d+'T'+(h||'19').padStart(2,'0')+(mn||'00').padStart(2,'0')+'00';}
@@ -1313,7 +1316,7 @@ function rBezoek(){
     ${Object.entries(byMonth).map(([key,occs])=>{
       const[y,m]=key.split('-');
       return`<div style="margin-bottom:6px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.5px;text-transform:uppercase;margin:8px 0 6px;padding-left:2px;">${MON[parseInt(m)-1]} ${y}</div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin:8px 0 6px;padding-left:2px;">${MON[parseInt(m)-1]} ${y}</div>
         ${occs.map(o=>`<div class="card" style="margin-bottom:10px;border-left:2px solid #57BCBC;">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
             <div>
@@ -1570,8 +1573,9 @@ function rAfdDetail(){
         </div>
         ${(()=>{
           const lb=((DB.localBestuur||{})[afd]||[]).filter(m=>memberNaam(m)||m.email);
-          if(!lb.length)return `<div style="font-size:9px;color:var(--gold-soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;border-top:0.5px solid var(--border);padding-top:8px;">Lokale bestuursleden</div><div style="font-size:11px;color:var(--text2);">Nog geen lokale bestuursleden.</div>`;
-          return `<div style="display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:8px;margin-bottom:6px;"><span style="font-size:9px;color:var(--gold-soft);text-transform:uppercase;letter-spacing:.5px;">Lokale bestuursleden (${lb.length})</span>${canEditBestuur(afd)?`<button class="btn btn-sm" style="font-size:9px;padding:2px 8px;" onclick="S.beheerAfd='${afd}';S.modal='local-bestuur';render()">${ICO.usrplus} Beheren</button>`:''}</div>`+
+          const _hdr=`<div style="display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:8px;margin-bottom:6px;"><span style="font-size:9px;color:var(--gold-soft);text-transform:uppercase;letter-spacing:.5px;">Lokale bestuursleden (${lb.length})</span>${canEditBestuur(afd)?`<button class="btn btn-sm" style="font-size:9px;padding:2px 8px;" onclick="S.beheerAfd='${afd}';S.modal='local-bestuur';render()">${ICO.usrplus} Beheren</button>`:''}</div>`;
+          if(!lb.length)return _hdr+`<div style="font-size:11px;color:var(--text2);">Nog geen lokale bestuursleden.</div>`;
+          return _hdr+
             lb.map(m=>`<div class="av-item" style="padding:4px 0;">
               <div style="flex:1;">
                 <div style="font-size:11px;color:var(--text);font-weight:600;">${memberNaam(m)||'—'} ${memberFuncties(m).map(f=>`<span class="badge b-blue" style="font-size:8px;">${f}</span>`).join(' ')}</div>
@@ -1726,12 +1730,12 @@ function rVzAfd(){
           const nx=DB.avs.filter(av=>av.afdeling===a&&av.datum>=today).sort((x,y)=>x.datum.localeCompare(y.datum))[0];
           const zienLeden=canSeeLeden(a);const zienAv=canSeeAv(a);
           return`<tr>
-            <td style="font-weight:600;"><a href="#" onclick="event.preventDefault();openAfdDetail('${a}')" style="color:${a===S.afd?'#0097D7':'#8AB4CC'};text-decoration:none;">${a}</a>${a===S.afd?` <span class="badge b-blue" style="font-size:8px;">Mijn afdeling</span>`:''}</td>
+            <td style="font-weight:600;"><a href="#" onclick="event.preventDefault();openAfdDetail('${a}')" style="color:${a===S.afd?'var(--teal)':'var(--text)'};text-decoration:none;">${a}</a>${a===S.afd?` <span class="badge b-blue" style="font-size:8px;">Mijn afdeling</span>`:''}</td>
             <td style="color:var(--text2);">${vz.naam||'—'}</td>
             <td>${vz.gsm?`<a href="tel:${vz.gsm}" style="color:var(--teal);font-size:11px;">${vz.gsm}</a>`:'—'}</td>
-            <td>${zienLeden?`<b>${info.leden||'—'}</b>`:'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</td>
-            <td>${zienLeden?(info.kandidaten||'—'):'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</td>
-            <td style="font-size:10px;color:var(--text3);">${zienAv?(nx?fd(nx.datum)+(nx.uur?' · '+nx.uur:''):'<span class="badge b-amber" style="font-size:9px;">'+t('geen_datum')+'</span>'):'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</td>
+            <td>${zienLeden?`<b>${info.leden||'—'}</b>`:'<span style="color:var(--text3);">🔒</span>'}</td>
+            <td>${zienLeden?(info.kandidaten||'—'):'<span style="color:var(--text3);">🔒</span>'}</td>
+            <td style="font-size:10px;color:var(--text3);">${zienAv?(nx?fd(nx.datum)+(nx.uur?' · '+nx.uur:''):'<span class="badge b-amber" style="font-size:9px;">'+t('geen_datum')+'</span>'):'<span style="color:var(--text3);">🔒</span>'}</td>
             <td><span class="badge ${vz.werkjaar==='academie'?'b-purple':'b-blue'}" style="font-size:9px;">${werkjaarLabel(vz.werkjaar||'kalender')}</span></td>
           </tr>`;
         }).join("")}
@@ -1775,9 +1779,9 @@ function rVzLeden(){
         ${vis.map(a=>{const info=DB.afdInfo[a]||{};
           const magZien=hasRecht('ledenAnder','ro')||(a===S.afd&&hasRecht('ledenEigen','ro'));
           return`<tr>
-          <td style="font-weight:${a===S.afd?'700':'500'};color:${a===S.afd?'#0097D7':'#fff'}">${a}</td>
-          <td><b>${magZien?(info.leden||'—'):'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</b></td>
-          <td>${magZien?(info.kandidaten||'—'):'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</td>
+          <td style="font-weight:${a===S.afd?'700':'500'};color:${a===S.afd?'var(--teal)':'var(--text)'}">${a}</td>
+          <td><b>${magZien?(info.leden||'—'):'<span style="color:var(--text3);">🔒</span>'}</b></td>
+          <td>${magZien?(info.kandidaten||'—'):'<span style="color:var(--text3);">🔒</span>'}</td>
           <td class="ts-small">${magZien?(info.ledenDatum||'—'):'—'}</td>
         </tr>`;}).join("")}
       </tbody></table></div>
@@ -1789,7 +1793,7 @@ function rVzLeden(){
 // ═══════════════════════════════════════════
 // ── Lokale bestuursleden (INFO — geen logins) ─────────────────
 const FUNCTIE_LIST=['Voorzitter','IPP','Vicevoorzitter','Secretaris','Penningmeester','Ledenverantwoordelijke','Communicatieverantwoordelijke','Vormingsverantwoordelijke','Internationalisme','Commissies','Business & Networking'];
-const WERKJAAR_OPTIONS=['2025','2026','2027','2028','2025-2026','2026-2027','2027-2028'];
+const WERKJAAR_OPTIONS=['2025','2025-2026','2026','2026-2027','2027','2027-2028','2028'];
 function memberNaam(m){ if(!m)return''; if(m.voornaam||m.familienaam)return((m.voornaam||'')+' '+(m.familienaam||'')).trim(); return m.naam||''; }
 function memberFuncties(m){ if(!m)return[]; if(Array.isArray(m.functies))return m.functies; return m.functie?[m.functie]:[]; }
 function afdCustomFuncties(afd){ return (DB.customFuncties&&DB.customFuncties[afd])||[]; }
@@ -1815,7 +1819,9 @@ function addCustomFunctie(afd){
   S.lbDraft=readLbForm(); if(S.lbDraft.functies.indexOf(v)===-1)S.lbDraft.functies.push(v);
   sdb();render();
 }
-function closeLbModal(){S.lbDraft=null;S.beheerAfd=null;S.modal=null;render();}
+function closeLbModal(){S.lbDraft=null;S.lbEditIdx=null;S.beheerAfd=null;S.modal=null;render();}
+function editLocalBestuur(afd,idx){var m=(DB.localBestuur[afd]||[])[idx];if(!m)return;S.lbEditIdx=idx;S.lbDraft={voornaam:m.voornaam||'',familienaam:m.familienaam||'',email:m.email||'',gsm:m.gsm||'',werkjaar:m.werkjaar||'',functies:(memberFuncties(m)||[]).slice()};render();}
+function cancelLbEdit(){S.lbEditIdx=null;S.lbDraft=null;render();}
 function rLocalBestuurModal(){
   const afd=beheerAfd();
   const members=(DB.localBestuur[afd]||[]);
@@ -1827,7 +1833,7 @@ function rLocalBestuurModal(){
     <div class="modal-title">${ICO.usrplus} Lokaal bestuur — ${afd}</div>
     <div class="alert alert-blue" style="margin-bottom:10px;font-size:11px;">Bestuursleden zijn <b>contactinfo</b> voor andere afdelingen — geen logins. Zo kan bv. de penningmeester van een andere afdeling snel gecontacteerd worden.</div>
     ${kanBewerken?`<div style="background:var(--navy4);border-radius:8px;padding:12px;margin-bottom:12px;">
-      <div class="card-title" style="margin-bottom:8px;">Nieuw bestuurslid toevoegen</div>
+      <div class="card-title" style="margin-bottom:8px;">${S.lbEditIdx!=null?'Bestuurslid bewerken':'Nieuw bestuurslid toevoegen'}</div>
       <div class="form-grid2">
         <div class="form-row"><label class="form-label">Voornaam</label><input class="form-input" id="lb-vn" type="text" value="${(d.voornaam||'').replace(/"/g,'&quot;')}" placeholder="Voornaam"/></div>
         <div class="form-row"><label class="form-label">Familienaam</label><input class="form-input" id="lb-fn" type="text" value="${(d.familienaam||'').replace(/"/g,'&quot;')}" placeholder="Familienaam"/></div>
@@ -1849,7 +1855,7 @@ function rLocalBestuurModal(){
         ${WERKJAAR_OPTIONS.indexOf(wjDefault)===-1?'<option value="'+wjDefault+'" selected>'+wjDefault+'</option>':''}
         ${WERKJAAR_OPTIONS.map(function(w){return '<option value="'+w+'" '+(w===wjDefault?'selected':'')+'>'+w+'</option>';}).join('')}
       </select></div>
-      <button class="btn btn-primary btn-sm" onclick="addLocalBestuur('${afd}')">${ICO.plus} Toevoegen</button>
+      <button class="btn btn-primary btn-sm" onclick="addLocalBestuur('${afd}')">${ICO.plus} ${S.lbEditIdx!=null?'Wijziging opslaan':'Toevoegen'}</button>${S.lbEditIdx!=null?`<button class="btn btn-sm" style="margin-left:6px;" onclick="cancelLbEdit()">Annuleer</button>`:''}
     </div>`:''}
 
     ${members.length===0?`<div style="color:var(--text3);font-size:12px;">Nog geen bestuursleden toegevoegd.</div>`:''}
@@ -1858,7 +1864,7 @@ function rLocalBestuurModal(){
       '<div style="font-size:10px;color:var(--text3);">'+(m.email||'—')+(m.gsm?' · '+m.gsm:'')+'</div>'+
       (m.werkjaar?'<div style="font-size:9px;color:var(--gold-soft);">'+m.werkjaar+'</div>':'')+
       '</div>'+
-      (kanBewerken?'<div style="display:flex;gap:4px;"><button class="btn btn-sm btn-danger" onclick="rmLocalBestuur(\''+afd+'\','+i+')">'+ICO.trash+'</button></div>':'')+
+      (kanBewerken?'<div style="display:flex;gap:4px;"><button class="btn btn-sm" onclick="editLocalBestuur(\''+afd+'\','+i+')">'+ICO.edit+'</button><button class="btn btn-sm btn-danger" onclick="rmLocalBestuur(\''+afd+'\','+i+')">'+ICO.trash+'</button></div>':'')+
     '</div>';}).join('')}
 
     <div class="modal-footer"><button class="btn" onclick="closeLbModal()">Sluiten</button></div>
@@ -1870,8 +1876,9 @@ function addLocalBestuur(afd){
   const voornaam=(f.voornaam||'').trim(), familienaam=(f.familienaam||'').trim();
   if(!voornaam&&!familienaam){alert('Vul minstens een voornaam of familienaam in.');return;}
   if(!DB.localBestuur[afd])DB.localBestuur[afd]=[];
-  DB.localBestuur[afd].push({voornaam:voornaam,familienaam:familienaam,functies:f.functies||[],email:(f.email||'').trim(),gsm:(f.gsm||'').trim(),werkjaar:(f.werkjaar||'').trim(),ts:tsNow()});
-  logChange('Bestuurslid toegevoegd',afd,'bestuur','',(voornaam+' '+familienaam).trim(),nowStr());
+  var rec={voornaam:voornaam,familienaam:familienaam,functies:f.functies||[],email:(f.email||'').trim(),gsm:(f.gsm||'').trim(),werkjaar:(f.werkjaar||'').trim()};
+  if(S.lbEditIdx!=null&&DB.localBestuur[afd][S.lbEditIdx]){rec.ts=DB.localBestuur[afd][S.lbEditIdx].ts||tsNow();DB.localBestuur[afd][S.lbEditIdx]=rec;logChange('Bestuurslid aangepast',afd,'bestuur','',(voornaam+' '+familienaam).trim(),nowStr());S.lbEditIdx=null;}
+  else{rec.ts=tsNow();DB.localBestuur[afd].push(rec);logChange('Bestuurslid toegevoegd',afd,'bestuur','',(voornaam+' '+familienaam).trim(),nowStr());}
   S.lbDraft=null;sdb();render();
 }
 function rmLocalBestuur(afd,idx){
@@ -1902,12 +1909,12 @@ function rVzMain(){
         <div class="page-title" style="color:var(--teal);">${(hasRecht('afdAnder','ro')||(afd===S.afd&&hasRecht('afdEigen','ro')))?`<a href="#" onclick="event.preventDefault();openAfdDetail('${afd}')" style="color:var(--teal);text-decoration:none;border-bottom:1px dotted rgba(0,151,215,0.5);" title="Open afdelingspagina">${afd}</a>`:afd}</div>
         <div class="page-sub">${gt(afd)} · ${werkjaarLabel(vz.werkjaar||'kalender')} · ${vz.werkjaar==='academie'?t('academie'):t('kalender')}</div>
       </div>
+      ${canEditAfd(afd)?`<button class="btn btn-sm" onclick="openAfdInfo('${afd}')">${ICO.settings} Bewerken</button>`:''}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <div class="card-title" style="margin:0;">${t('voorzitter')}</div>
-          ${canEditAfd(afd)?`<button class="btn btn-sm" onclick="openAfdInfo('${afd}')">${ICO.settings} Bewerken</button>`:''}
         </div>
         <div style="display:grid;grid-template-columns:70px 1fr;gap:4px 8px;font-size:12px;">
           <span style="color:var(--text3);">${t('naam')}</span><span style="color:var(--text);font-weight:600;">${vz.naam||'—'}</span>
@@ -1915,7 +1922,7 @@ function rVzMain(){
           <span style="color:var(--text3);">E-mail</span><span style="font-size:11px;color:var(--text3);">${vz.email||'—'}</span>
           <span style="color:var(--text3);">${t('werkjaar')}</span><span><span class="badge ${vz.werkjaar==='academie'?'b-purple':'b-blue'}">${werkjaarLabel(vz.werkjaar||'kalender')}</span></span>
         </div>
-        ${S.role==='vz'?`<button class="btn btn-sm" style="margin-top:10px;width:100%;" onclick="S.beheerAfd=null;S.modal='local-bestuur';render()">${ICO.usrplus} Lokaal bestuur beheren</button>`:''}
+        ${S.role==='vz'?``:''}
       </div>
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
@@ -1929,27 +1936,6 @@ function rVzMain(){
         <div style="font-size:10px;color:#6A94B0;">${t('peildatum')}: ${info.ledenDatum||'—'}</div>
       </div>
     </div>
-    ${hasRecht('avEigen','ro')?`<div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <div class="card-title" style="margin:0;">AG's — ${afd} (${avs.length})</div>
-        ${hasRecht('avEigen','rw')?`<button class="btn btn-primary btn-sm" onclick="S.editId=null;S.modal='av';S.avModalDatum='';render()">${ICO.calav} ${t('av_toevoegen')}</button>`:''}
-      </div>
-      ${avs.length===0?`<div style="color:var(--text2);font-size:12px;">${t('geen_avs')}</div>`:''}
-      ${upcoming.map(av=>`<div class="av-item">
-        <div><div class="av-name">${fd(av.datum)}${av.uur?' · '+av.uur:''}</div>
-        <div class="av-meta">${av.locatie||''}${av.adres?' — '+av.adres:''}</div></div>
-        <div style="display:flex;gap:5px;">
-          ${canAttend(av.afdeling)?`<button class="attend-btn btn-sm ${av.aanwezig===true?'yes':av.aanwezig===false?'no':''}" onclick="togAan('${av.id}')">${av.aanwezig===true?ICO.check:av.aanwezig===false?ICO.xmark:'?'}</button>`:''}
-          ${hasRecht('avEigen','rw')?`<button class="btn btn-sm" onclick="S.editId='${av.id}';S.modal='av';S.avModalDatum='';render()">${ICO.edit}</button>
-          <button class="btn btn-sm btn-danger" onclick="delAV('${av.id}')">${ICO.trash}</button>`:''}
-        </div></div>`).join('')}
-      ${past.length>0?`<div style="font-size:9px;color:var(--gold-soft);margin-top:8px;margin-bottom:4px;">${t('voorbije_avs')}</div>`:''}
-      ${past.map(av=>`<div class="av-item" style="opacity:.6;">
-        <div><div class="av-name">${fd(av.datum)}${av.uur?' · '+av.uur:''}</div>
-        <div class="av-meta">${av.locatie||''}</div></div>
-        <span class="badge ${av.aanwezig===true?'b-green':av.aanwezig===false?'b-red':'b-gray'}">${av.aanwezig===true?t('aanwezig'):av.aanwezig===false?t('afwezig'):'?'}</span>
-      </div>`).join('')}
-    </div>`:''}
     <!-- G3: Leden afdeling in VZ dashboard -->
     ${(()=>{
       const wjType=(DB.werkjaarConfig&&DB.werkjaarConfig[afd]?.type)||vz.werkjaar||'kalender';
@@ -1970,7 +1956,7 @@ function rVzMain(){
           ${S.role==='vz'?`<button class="btn btn-primary btn-sm" onclick="S.beheerAfd=null;S.modal='local-bestuur';render()" title="Bestuursleden beheren">${ICO.usrplus} Beheren</button>`:''}
         </div>
         ${allMembers.length===0
-          ?`<div style="color:var(--text2);font-size:11px;">Nog geen leden toegevoegd.</div>`
+          ?`<div style="color:var(--text2);font-size:11px;">Nog geen bestuursleden toegevoegd.</div>`
           :`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0 20px;">`+allMembers.map(lid=>{
             const initials=(memberNaam(lid)||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
             const rolBadge=lid.rol==='vz'?'b-blue':(lid.rol==='bestuurslid'||lid.rol==='localBestuur')?'b-teal':'b-gray';
@@ -1989,13 +1975,36 @@ function rVzMain(){
         }
       </div>`;
     })()}
+    ${hasRecht('avEigen','ro')?`<div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div class="card-title" style="margin:0;">AV's — ${afd} (${avs.length})</div>
+        ${hasRecht('avEigen','rw')?`<button class="btn btn-primary btn-sm" onclick="S.editId=null;S.modal='av';S.avModalDatum='';render()">${ICO.calav} ${t('av_toevoegen')}</button>`:''}
+      </div>
+      ${avs.length===0?`<div style="color:var(--text2);font-size:12px;">${t('geen_avs')}</div>`:''}
+      ${upcoming.map(av=>`<div class="av-item">
+        <div><div class="av-name">${fd(av.datum)}${av.uur?' · '+av.uur:''}</div>
+        <div class="av-meta">${av.locatie||''}${av.adres?' — '+av.adres:''}</div></div>
+        <div style="display:flex;gap:5px;">
+          ${canAttend(av.afdeling)?`<button class="attend-btn btn-sm ${av.aanwezig===true?'yes':av.aanwezig===false?'no':''}" onclick="togAan('${av.id}')">${av.aanwezig===true?ICO.check:av.aanwezig===false?ICO.xmark:'?'}</button>`:''}
+          ${hasRecht('avEigen','rw')?`<button class="btn btn-sm" onclick="S.editId='${av.id}';S.modal='av';S.avModalDatum='';render()">${ICO.edit}</button>
+          <button class="btn btn-sm btn-danger" onclick="delAV('${av.id}')">${ICO.trash}</button>`:''}
+        </div></div>`).join('')}
+      ${past.length>0?`<div style="font-size:9px;color:var(--gold-soft);margin-top:8px;margin-bottom:4px;">${t('voorbije_avs')}</div>`:''}
+      ${past.map(av=>`<div class="av-item" style="opacity:.6;">
+        <div><div class="av-name">${fd(av.datum)}${av.uur?' · '+av.uur:''}</div>
+        <div class="av-meta">${av.locatie||''}</div></div>
+        <span class="badge ${av.aanwezig===true?'b-green':av.aanwezig===false?'b-red':'b-gray'}">${av.aanwezig===true?t('aanwezig'):av.aanwezig===false?t('afwezig'):'?'}</span>
+      </div>`).join('')}
+    </div>`:''}
+
     ${S.modal==='local-bestuur'?rLocalBestuurModal():''}${S.modal==='new-cred'?rNewCredModal():''}${S.modal==='popup'?rPopupModal():''}
   </div>`;}
 
 function rVzMapWrap(){
   if(!hasRecht('kaart','ro'))return`<div class="page active"><div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_toegang_scherm')}</div></div></div>`;
   return`<div class="page active">
-    <div id="map-afd-container" style="height:calc(100vh - 120px);border-radius:8px;overflow:hidden;border:1px solid var(--border2);background:var(--navy3);"></div>
+    <div class="topbar"><div><div class="page-title">${t('afdKaart')}</div><div class="page-sub">Locaties van de afdelingen in Vlaanderen</div><div style="margin-top:4px;">${rAktiefFilterButtons()}</div></div></div>
+    <div id="map-afd-container" style="height:calc(100vh - 160px);border-radius:8px;overflow:hidden;border:1px solid var(--border2);background:var(--navy3);"></div>
   </div>`;}
 
 // ═══════════════════════════════════════════
@@ -2113,7 +2122,7 @@ function rAvLijst(){
     ${groups.length===0?`<div class="card"><div style="color:var(--text2);font-size:12px;padding:10px 0;">${t('geen_avs')}</div></div>`:''}
 
     ${groups.map(g=>`<div style="margin-bottom:12px;">
-      <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;padding-left:2px;">${g.label}</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;padding-left:2px;">${g.label}</div>
       ${g.avs.map(av=>{
         const isPast=av.datum<today;
         const notes=DB.avNotes&&DB.avNotes[av.id];
@@ -2132,7 +2141,7 @@ function rAvLijst(){
               <button class="attend-btn btn-sm ${av.aanwezig===true?'yes':av.aanwezig===false?'no':''}" onclick="togAan('${av.id}')">${av.aanwezig===true?ICO.check:av.aanwezig===false?ICO.xmark:'?'}</button>
               <button class="btn btn-sm" onclick="S.editId='${av.id}';S.modal='av';S.avModalDatum='';render()">${ICO.edit}</button>
               <button class="btn btn-sm btn-danger" onclick="delAV('${av.id}')">${ICO.trash}</button>
-            `:`<div title="Enkel lezen" style="color:rgba(255,255,255,0.2);font-size:10px;">🔒</div>`}
+            `:`<div title="Enkel lezen" style="color:var(--text3);font-size:10px;">🔒</div>`}
           </div>
         </div>`;
       }).join('')}
@@ -2283,7 +2292,7 @@ function rJciAvs(){
               <div style="font-size:13px;font-weight:600;color:var(--text);">${t('avJci')} — ${fd(av.datum)} ${av.uur?'· '+av.uur:''}</div>
               <div style="font-size:11px;color:var(--text3);margin-top:2px;">${av.locatie||'Locatie TBD'}${av.adres?' · '+av.adres:''}</div>
               ${av.agenda?`<div style="font-size:10px;color:#6A94B0;margin-top:2px;">📋 ${av.agenda.slice(0,80)}${av.agenda.length>80?'...':''}</div>`:''}
-              ${av.externeLink?`<div style="margin-top:4px;"><a href="${av.externeLink.replace(/"/g,'&quot;')}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gold);text-decoration:none;font-weight:600;">${ICO.ext} Externe inschrijflink</a></div>`:''}
+              ${av.externeLink?`<div style="margin-top:4px;"><a href="${extUrl(av.externeLink).replace(/"/g,'&quot;')}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--gold);text-decoration:none;font-weight:600;">${ICO.ext} Externe inschrijflink</a></div>`:''}
             </div>
           </div>
           <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">
@@ -2400,10 +2409,10 @@ function rJciAvOverzicht(av){
               ${candidates.map(c=>`<option value="${c}" ${curVm===c?'selected':''}>${c.replace('JCI ','')}</option>`).join('')}
               ${curVm&&!candidates.find(c=>c===curVm)?`<option value="${curVm}" selected>${curVm.replace('JCI ','')} ⚠</option>`:''}
             </select>`;
-          })():(st.volmachtAan?`<span style="color:var(--gold);">→ ${st.volmachtAan.replace('JCI ','')}</span>`:`<span style="color:rgba(255,255,255,0.2);">—</span>`))
+          })():(st.volmachtAan?`<span style="color:var(--gold);">→ ${st.volmachtAan.replace('JCI ','')}</span>`:`<span style="color:var(--text3);">—</span>`))
           :receivedVm.length
             ?`<span style="color:var(--green);">+&nbsp;${receivedVm.map(g=>g.replace('JCI ','')).join(', ')}</span>`
-            :`<span style="color:rgba(255,255,255,0.2);">—</span>`}
+            :`<span style="color:var(--text3);">—</span>`}
         </td>
         <td><span class="badge ${effStem>0?'b-green':'b-gray'}">${effStem}</span></td>
       </tr>`).join('')}
@@ -2804,7 +2813,7 @@ function rRechten(){
     <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;">
       <div style="font-size:8px;padding:2px 8px;border-radius:3px;background:rgba(0,151,215,0.15);color:var(--teal);display:flex;align-items:center;gap:3px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#0097D7" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Bewerken</div>
       <div style="font-size:8px;padding:2px 8px;border-radius:3px;background:rgba(29,158,117,0.12);color:#1D9E75;display:flex;align-items:center;gap:3px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Lezen</div>
-      <div style="font-size:8px;padding:2px 8px;border-radius:3px;background:var(--panel);color:rgba(255,255,255,0.3);">— Geen</div>
+      <div style="font-size:8px;padding:2px 8px;border-radius:3px;background:var(--panel);color:var(--text3);">— Geen</div>
     </div>
     <div style="overflow-x:auto;">
     <table class="dt" style="font-size:9px;min-width:600px;">
@@ -2916,7 +2925,7 @@ function rOverdrachtModal(){
         <option value="lid">Lokaal lid</option>
       </select>
     </div>
-    <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:6px;">Tijdelijk kunnen twee personen tegelijk de rol afdelingsvoorzitter hebben. Dit is normaal tijdens de overgangsperiode.</div>
+    <div style="font-size:9px;color:var(--text3);margin-top:6px;">Tijdelijk kunnen twee personen tegelijk de rol afdelingsvoorzitter hebben. Dit is normaal tijdens de overgangsperiode.</div>
     <script>document.getElementById('od-nieuw').onchange=function(){document.getElementById('od-nieuw-form').style.display=this.value==='__nieuw'?'block':'none';};<\/script>
     <div class="modal-footer">
       <button class="btn" onclick="S.modal=null;S.overdrachtAfd=null;render()">${t('annuleren')}</button>
@@ -3060,7 +3069,7 @@ function rDashJciAv(){
   h+="<div><div style=\"font-size:9px;color:var(--teal);font-weight:600;text-transform:uppercase;margin-bottom:3px;\">"+t("avJci")+" &middot; Volgende</div>";
   h+="<div style=\"font-size:14px;font-weight:700;color:var(--text);\">"+fd(n.datum)+(n.uur?" &middot; "+n.uur:"")+"</div>";
   h+="<div style=\"font-size:11px;color:var(--text3);margin-top:1px;\">"+(n.locatie||"Locatie TBD")+"</div>";
-  if(n.externeLink){h+="<div style=\"margin-top:5px;\"><a href=\""+n.externeLink.replace(/\"/g,'&quot;')+"\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--gold);text-decoration:none;font-weight:600;\">"+ICO.ext+" "+t('inschrijven')+"</a></div>";}
+  if(n.externeLink){h+="<div style=\"margin-top:5px;\"><a href=\""+extUrl(n.externeLink).replace(/\"/g,'&quot;')+"\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--gold);text-decoration:none;font-weight:600;\">"+ICO.ext+" "+t('inschrijven')+"</a></div>";}
   h+="</div>";
   h+="<div style=\"display:flex;gap:8px;align-items:center;flex-wrap:wrap;\">";
   if(hasRecht('jciAvAnder','ro')||hasRecht('jciAvBeheer','ro')){
@@ -3103,9 +3112,9 @@ function rAfdSortTopbar(){
   h+=t("afdelingen")+"</div>";
   h+="<div style=\"margin-top:4px;\">"+rAktiefFilterButtons()+"</div>";
   h+="<div style=\"display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;overflow-x:auto;scrollbar-width:none;\">";
-  h+="<span style=\"font-size:9px;color:rgba(255,255,255,0.3);\">Groep:</span>";
+  h+="<span style=\"font-size:9px;color:var(--text3);\">Groep:</span>";
   [["provincie","Per provincie"],["alle","Alles samen"]].forEach(function(g){h+="<button class=\"seg-btn "+(gm===g[0]?"active":"")+"\" data-gm=\""+g[0]+"\" onclick=\"S.afdGroupMode=this.dataset.gm;render()\" style=\"font-size:9px;\">"+g[1]+"</button>";});
-  h+="<span style=\"font-size:9px;color:rgba(255,255,255,0.3);margin-left:6px;\">Sorteer:</span>";
+  h+="<span style=\"font-size:9px;color:var(--text3);margin-left:6px;\">Sorteer:</span>";
   [["naam","Naam"],["voorzitter","Voorzitter"],["leden","Leden"],["kandidaten","Kand."],["lustrum","Lustrum"],["av","Volg. AV"]].forEach(function(sv){h+="<button class=\"seg-btn "+(sm===sv[0]?"active":"")+"\" data-sm=\""+sv[0]+"\" onclick=\"S.afdSortMode=this.dataset.sm;render()\" style=\"font-size:9px;\">"+sv[1]+"</button>";});
   h+="</div></div></div>";
   return h;
@@ -3147,7 +3156,7 @@ function rAfdTableRows(afds,distLabel){
     var aktief=!(info.aktief===false);
     var canDetail=hasRecht('afdAnder','ro')||(a===S.afd&&hasRecht('afdEigen','ro'));
     var nameHtml=canDetail?"<a href=\"#\" onclick=\"event.preventDefault();openAfdDetail('"+a+"')\" style=\"color:var(--teal);text-decoration:none;\">"+a+"</a>":a;
-    var lust=(function(){var l=calcLustrum(a);if(!l)return "<span style=\"color:rgba(255,255,255,0.2);font-size:9px;\">—</span>";var star=(l.isCurrent||l.isNext)?"⭐":"";var col=l.isCurrent?"#EFC40F":l.isNext?"#57BCBC":"#6A94B0";return "<span style=\"font-size:9px;color:"+col+";\">"+l.nextWj+(star?" "+star:"")+"</span>";})();
+    var lust=(function(){var l=calcLustrum(a);if(!l)return "<span style=\"color:var(--text3);font-size:9px;\">—</span>";var star=(l.isCurrent||l.isNext)?"⭐":"";var col=l.isCurrent?"#EFC40F":l.isNext?"#57BCBC":"#6A94B0";return "<span style=\"font-size:9px;color:"+col+";\">"+l.nextWj+(star?" "+star:"")+"</span>";})();
     h+="<tr style=\""+(aktief?"":"opacity:.5;")+"\">";
     h+="<td style=\"font-weight:500;\">"+nameHtml+"<br><span style=\"font-size:10px;color:var(--teal);\">"+werkjaarLabel((DB.werkjaarConfig&&DB.werkjaarConfig[a]&&DB.werkjaarConfig[a].type)||(DB.afdInfo&&DB.afdInfo[a]&&DB.afdInfo[a].werkjaarType)||"kalender")+"</span></td>";
     h+="<td style=\"color:var(--text2);\">"+( vz.naam||"—")+(vz.gsm?"<br><a href=\"tel:"+vz.gsm+"\" style=\"font-size:10px;color:var(--teal);\">"+vz.gsm+"</a>":"")+"</td>";
@@ -3238,7 +3247,7 @@ function rKalContent(){
         </div>`).join('')}
       </div>
       <div class="card"><div class="card-title">AV's — ${MON[m]}</div>
-        ${avs.length===0?`<div style="color:var(--text2);font-size:11px;">Geen AV's.</div>`:""}
+        ${avs.length===0?`<div style="color:var(--text2);font-size:11px;">Nog geen AV's toegevoegd.</div>`:""}
         ${avs.sort((a,b)=>a.datum.localeCompare(b.datum)).map(av=>`<div class="av-item">
           <div><div class="av-name" style="font-size:11px;">${av.afdeling}</div><div class="av-meta">${fd(av.datum)}${av.uur?` · ${av.uur}`:""}</div></div>
           ${canAttend(av.afdeling)?`<button class="attend-btn btn-sm ${av.aanwezig===true?'yes':av.aanwezig===false?'no':''}" onclick="togAan('${av.id}')">${av.aanwezig===true?ICO.check+' '+t('aanwezig'):av.aanwezig===false?ICO.xmark+' '+t('afwezig'):'?'}</button>`:''}
@@ -3297,7 +3306,7 @@ function initAfdMapReadonly(){if(typeof L==="undefined"){document.getElementById
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap",maxZoom:18}).addTo(leafletAfdMap);
   const today=nowStr();
   filterByAktief(afdsWithInactive(),S.afdFilterAktief||'aktief').forEach(afd=>{
-    const coord=getCoords(afd);const dist=gt(afd);const color=DIST_COLORS[dist]||"#888";
+    const coord=getCoords(afd);const dist=gt(afd);const color=(DB.afdInfo[afd]&&DB.afdInfo[afd].aktief===false)?"#9AA3B2":(DIST_COLORS[dist]||"#888");
     const info=DB.afdInfo[afd]||{};const vz=DB.vz[afd]||{};
     const vzNaam=vz.naam||"—";const vzGsmRaw=vz.gsm||"";const vzGsm=vzGsmRaw||"—";const vzWJ=werkjaarLabel(vz.werkjaar||'kalender');
     const nextAV=DB.avs.filter(av=>av.afdeling===afd&&av.datum>=today).sort((a,b)=>a.datum.localeCompare(b.datum))[0];
@@ -3321,7 +3330,7 @@ function initAfdMap(){if(typeof L==="undefined"){document.getElementById("map-co
   filterByAktief(afdsWithInactive(),S.afdFilterAktief||'aktief').forEach(afd=>{
     const coord=getCoords(afd);
     const dist=gt(afd);
-    const color=DIST_COLORS[dist]||"#888";
+    const color=(DB.afdInfo[afd]&&DB.afdInfo[afd].aktief===false)?"#9AA3B2":(DIST_COLORS[dist]||"#888");
     const info=DB.afdInfo[afd]||{};
     const leden=info.leden||"—";
     const vz=DB.vz[afd]||{};
@@ -3443,8 +3452,8 @@ function rLeden(){
             <td style="font-weight:500;">${canSeeAfd(a)?`<a href="#" onclick="event.preventDefault();openAfdDetail('${a}')" style="color:var(--teal);text-decoration:none;">${a}</a>`:a}</td>
             <td style="color:var(--text2);">${gt(a)}</td>
             <td><span class="badge ${vz.werkjaar==='academie'?'b-purple':'b-blue'}">${werkjaarLabel(vz.werkjaar||'kalender')}</span></td>
-            <td><b>${magZien?(info.leden||'—'):'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</b></td>
-            <td>${magZien?(info.kandidaten||'—'):'<span style="color:rgba(255,255,255,0.2);">🔒</span>'}</td>
+            <td><b>${magZien?(info.leden||'—'):'<span style="color:var(--text3);">🔒</span>'}</b></td>
+            <td>${magZien?(info.kandidaten||'—'):'<span style="color:var(--text3);">🔒</span>'}</td>
             <td class="ts-small">${magZien?lastTs:'—'}</td>
             <td>${magEdit?`<button class="btn btn-sm" onclick="openLedenHist('${a}')">${ICO.history}</button>`:''}</td>
           </tr>`;
@@ -3576,7 +3585,7 @@ function initCharts(){
         options:{
           responsive:true,maintainAspectRatio:false,
           plugins:{
-            legend:{labels:{color:"#C8DFF0",font:{size:11}}},
+            legend:{labels:{color:(currentTheme()==='light'?'#3A475B':'#C8DFF0'),font:{size:11}}},
             tooltip:{callbacks:{
               title:items=>{
                 const ms=items[0].parsed.x;
@@ -3619,13 +3628,13 @@ function initCharts(){
       const provLabels=Object.keys(DIST);
       const ledenData=provLabels.map(d=>DIST[d].filter(a=>aktiefMatch(a,aktMode)).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.leden||0),0));
       const kandData=provLabels.map(d=>DIST[d].filter(a=>aktiefMatch(a,aktMode)).reduce((s,a)=>s+parseInt(DB.afdInfo[a]?.kandidaten||0),0));
-      const bgLeden=provLabels.map(d=>DIST_COLORS[d]+"DD");
-      const bgKand=provLabels.map(d=>DIST_COLORS[d]+"66");
+      const bgLeden=provLabels.map(d=>"#6B7480");
+      const bgKand=provLabels.map(d=>"#BFC7D2");
       if(S.chartType!=="kandidaten")datasets.push({label:t('leden_lbl'),data:ledenData,backgroundColor:bgLeden,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
       if(S.chartType!=="leden")datasets.push({label:t('kandidaten'),data:kandData,backgroundColor:bgKand,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
       chartInst=new Chart(ctx,{type:"bar",data:{labels:provLabels,datasets},options:{
         responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:"#C8DFF0"}}},
+        plugins:{legend:{labels:{color:(currentTheme()==='light'?'#3A475B':'#C8DFF0')}}},
         scales:{
           x:{ticks:{color:(currentTheme()==='light'?'#5E7488':'#8AB4CC'),font:{size:10}},stacked:BOTH},
           y:{ticks:{color:(currentTheme()==='light'?'#5E7488':'#8AB4CC')},beginAtZero:true,stacked:BOTH,
@@ -3640,15 +3649,15 @@ function initCharts(){
       const afdLabels=afds2.map(a=>a.replace('JCI ',''));
       const ledenData=afds2.map(a=>parseInt(DB.afdInfo[a]?.leden||0));
       const kandData=afds2.map(a=>parseInt(DB.afdInfo[a]?.kandidaten||0));
-      const bgLeden=afds2.map(a=>DIST_COLORS[gt(a)]+"DD");
-      const bgKand=afds2.map(a=>DIST_COLORS[gt(a)]+"55");
+      const bgLeden=afds2.map(a=>"#6B7480");
+      const bgKand=afds2.map(a=>"#BFC7D2");
       if(S.chartType!=="kandidaten")datasets.push({label:t('leden_lbl'),data:ledenData,backgroundColor:bgLeden,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
       if(S.chartType!=="leden")datasets.push({label:t('kandidaten'),data:kandData,backgroundColor:bgKand,borderRadius:4,...barOpts,stack:BOTH?'s':undefined});
       const isHoriz=afds2.length>10;
       chartInst=new Chart(ctx,{type:"bar",data:{labels:afdLabels,datasets},options:{
         responsive:true,maintainAspectRatio:false,
         indexAxis:isHoriz?"y":"x",
-        plugins:{legend:{labels:{color:"#C8DFF0"}}},
+        plugins:{legend:{labels:{color:(currentTheme()==='light'?'#3A475B':'#C8DFF0')}}},
         scales:{
           x:{ticks:{color:(currentTheme()==='light'?'#5E7488':'#8AB4CC'),font:{size:10}},stacked:BOTH,
             title:isHoriz?{display:true,text:BOTH?(t('leden_lbl')+' + '+t('kandidaten')):(S.chartType==='kandidaten'?t('kandidaten'):t('leden_lbl')),color:(currentTheme()==='light'?'#5E7488':'#8AB4CC'),font:{size:9}}:{display:false}},
@@ -4133,9 +4142,9 @@ function renderRechtenRows(modules,roles,getRecht){
         lastGrp=mod.group;
         rows+='<tr><td colspan="6" style="padding:8px 10px 4px;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-soft);background:rgba(239,196,15,0.06);border-top:1px solid rgba(239,196,15,0.15);">'+mod.group+'</td></tr>';
       }
-      rows+='<tr><td style="color:var(--text2);">'+mod.label+'</td><td style="text-align:center;"><div style="background:var(--panel);border-radius:3px;padding:3px 6px;font-size:10px;color:rgba(255,255,255,0.2);">🔒</div></td>'+roles.map(function(rol){
+      rows+='<tr><td style="color:var(--text2);">'+mod.label+'</td><td style="text-align:center;"><div style="background:var(--panel);border-radius:3px;padding:3px 6px;font-size:10px;color:var(--text3);">🔒</div></td>'+roles.map(function(rol){
         const cur=getRecht(rol,mod.id);
-        return'<td style="text-align:center;"><div style="display:inline-flex;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;'+(canEdit?'':'opacity:0.7;')+'"><button'+clk(rol,mod.id,'rw')+'width:26px;height:22px;border:none;display:flex;align-items:center;justify-content:center;background:'+(cur==='rw'?'rgba(0,151,215,0.25)':'rgba(255,255,255,0.03)')+';"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="'+(cur==='rw'?'#0097D7':'rgba(255,255,255,0.25)')+'" stroke-width="3" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button'+clk(rol,mod.id,'ro')+'width:26px;height:22px;border:none;display:flex;align-items:center;justify-content:center;background:'+(cur==='ro'?'rgba(87,188,188,0.2)':'rgba(255,255,255,0.03)')+';"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="'+(cur==='ro'?'#57BCBC':'rgba(255,255,255,0.25)')+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button'+clk(rol,mod.id,'none')+'width:26px;height:22px;border:none;display:flex;align-items:center;justify-content:center;background:'+(cur==='none'||!cur?'rgba(255,100,100,0.15)':'rgba(255,255,255,0.03)')+';"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="'+(cur==='none'||!cur?'#E17055':'rgba(255,255,255,0.25)')+'" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div></td>';
+        return'<td style="text-align:center;"><div style="display:inline-flex;border:0.5px solid var(--border);border-radius:4px;overflow:hidden;'+(canEdit?'':'opacity:0.7;')+'"><button'+clk(rol,mod.id,'rw')+'width:26px;height:22px;border:none;display:flex;align-items:center;justify-content:center;background:'+(cur==='rw'?'rgba(0,151,215,0.25)':'var(--panel)')+';"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="'+(cur==='rw'?'#0097D7':(currentTheme()==='light'?'#8A94A4':'rgba(255,255,255,0.25)'))+'" stroke-width="3" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button'+clk(rol,mod.id,'ro')+'width:26px;height:22px;border:none;display:flex;align-items:center;justify-content:center;background:'+(cur==='ro'?'rgba(87,188,188,0.2)':'var(--panel)')+';"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="'+(cur==='ro'?'#57BCBC':(currentTheme()==='light'?'#8A94A4':'rgba(255,255,255,0.25)'))+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button'+clk(rol,mod.id,'none')+'width:26px;height:22px;border:none;display:flex;align-items:center;justify-content:center;background:'+(cur==='none'||!cur?'rgba(255,100,100,0.15)':'var(--panel)')+';"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="'+(cur==='none'||!cur?'#E17055':(currentTheme()==='light'?'#8A94A4':'rgba(255,255,255,0.25)'))+'" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div></td>';
       }).join('')+'</tr>';
       });
   return rows;
